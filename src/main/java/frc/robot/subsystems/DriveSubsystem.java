@@ -24,12 +24,16 @@ import com.ctre.phoenixpro.hardware.TalonFX;
 import com.ctre.phoenixpro.signals.NeutralModeValue;
 
 public class DriveSubsystem extends SubsystemBase {
-  public static final double kMaxSpeed = 8.0;
-  public static final double kMaxRotation = 0.25;
-
+  private static final double kMaxSpeed = 8.0;
+  private static final double kMaxRotation = 0.25;
   private static final double kWheelDiameter = 0.1524;
   private static final double kGearRatio = 72 / 13;
   private static final double kSpeedToRotationsMultiplier = (1 / (Math.PI * kWheelDiameter)) * kGearRatio;
+
+  private static final double kP = 5; // An error of 1 rotation per second results in 5 amps output
+  private static final double kI = 0.1; // An error of 1 rotation per second increases output by 0.1 amps every second
+  private static final double kD = 0.001; // A change of 1000 rotation per second squared results in 1 amp output
+  private static final double kPeakCurrent = 40;
 
   private final TalonFX frontLeftMotor = new TalonFX(1);
   private final TalonFX frontRightMotor = new TalonFX(2);
@@ -73,13 +77,13 @@ public class DriveSubsystem extends SubsystemBase {
      * Torque-based velocity does not require a feed forward, as torque will
      * accelerate the rotor up to the desired velocity by itself
      */
-    configs.Slot0.kP = 5; // An error of 1 rotation per second results in 5 amps output
-    configs.Slot0.kI = 0.1; // An error of 1 rotation per second increases output by 0.1 amps every second
-    configs.Slot0.kD = 0.001; // A change of 1000 rotation per second squared results in 1 amp output
+    configs.Slot0.kP = kP;
+    configs.Slot0.kI = kI;
+    configs.Slot0.kD = kD;
 
     // Peak output of 40 amps
-    configs.TorqueCurrent.PeakForwardTorqueCurrent = 40;
-    configs.TorqueCurrent.PeakReverseTorqueCurrent = -40;
+    configs.TorqueCurrent.PeakForwardTorqueCurrent = kPeakCurrent;
+    configs.TorqueCurrent.PeakReverseTorqueCurrent = -kPeakCurrent;
 
     configs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
