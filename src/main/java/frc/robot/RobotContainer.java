@@ -42,7 +42,7 @@ public class RobotContainer {
                 leftDriveJoystick.getY(),
                 leftDriveJoystick.getX(),
                 rightDriveJoystick.getX(),
-                leftDriveJoystick.getRawButton(0)),
+                !leftDriveJoystick.getRawButton(0)),
             drive));
   }
 
