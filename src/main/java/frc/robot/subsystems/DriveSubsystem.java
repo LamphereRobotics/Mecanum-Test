@@ -122,14 +122,25 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public void setSpeeds(MecanumDriveWheelSpeeds speeds) {
-    frontLeftMotor
-        .setControl(torqueVelocity.withVelocity(speeds.frontLeftMetersPerSecond * kSpeedToRotationsMultiplier));
-    frontRightMotor
-        .setControl(torqueVelocity.withVelocity(speeds.frontRightMetersPerSecond * kSpeedToRotationsMultiplier));
-    rearLeftMotor
-        .setControl(torqueVelocity.withVelocity(speeds.rearLeftMetersPerSecond * kSpeedToRotationsMultiplier));
-    rearRightMotor
-        .setControl(torqueVelocity.withVelocity(speeds.rearRightMetersPerSecond * kSpeedToRotationsMultiplier));
+    setMotorVelocity(frontLeftMotor, speeds.frontLeftMetersPerSecond);
+    setMotorVelocity(frontRightMotor, speeds.frontRightMetersPerSecond);
+    setMotorVelocity(rearLeftMotor, speeds.rearLeftMetersPerSecond);
+    setMotorVelocity(rearRightMotor, speeds.rearRightMetersPerSecond);
+  }
+
+  private void setMotorVelocity(TalonFX motor, double speed) {
+    double feedForward = 0;
+    if (Math.abs(speed) < kMinSpeed) {
+      speed = 0;
+    } else if (speed > 0) {
+      feedForward = kF;
+    } else {
+      feedForward = -kF;
+    }
+    motor
+        .setControl(torqueVelocity
+            .withVelocity(speed * kSpeedToRotationsMultiplier)
+            .withFeedForward(feedForward));
   }
 
   public void drive(ChassisSpeeds chassisSpeeds) {
