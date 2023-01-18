@@ -29,12 +29,14 @@ public class DriveSubsystem extends SubsystemBase {
   private static final double kMaxRotation = Math.PI; // 1/2 rotation per second
   private static final double kWheelDiameter = 0.1524; // 6 inches = 0.1524 meters
   private static final double kGearRatio = 72 / 13; // 72 motor rotations per wheel rotation
-  private static final double kSpeedToRotationsMultiplier = (1 / (Math.PI * kWheelDiameter)) * kGearRatio; // meters per second to motor rotations per second
+  // meters per second to motor rotations per second
+  private static final double kSpeedToRotationsMultiplier = (1 / (Math.PI * kWheelDiameter)) * kGearRatio;
 
   private static final double kP = 5; // An error of 1 rotation per second results in 5 amps output
   private static final double kI = 0.1; // An error of 1 rotation per second increases output by 0.1 amps every second
   private static final double kD = 0.001; // A change of 1000 rotation per second squared results in 1 amp output
   private static final double kF = 1; // Feed forward to overcome static friction
+  private static final double kOutputRampPeriod = 0; // Seconds to go from 0A to +-40A output
 
   // Peak output of 40 amps
   private static final double kPeakCurrent = 40;
@@ -89,6 +91,7 @@ public class DriveSubsystem extends SubsystemBase {
     configs.TorqueCurrent.PeakReverseTorqueCurrent = -kPeakCurrent;
 
     configs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    configs.ClosedLoopRamps.TorqueClosedLoopRampPeriod = (300 / kPeakCurrent) * kOutputRampPeriod;
 
     frontLeftMotor.getConfigurator().apply(configs);
     frontRightMotor.getConfigurator().apply(configs);
