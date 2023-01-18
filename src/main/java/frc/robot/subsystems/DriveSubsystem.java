@@ -11,6 +11,7 @@ import edu.wpi.first.math.kinematics.MecanumDriveOdometry;
 import edu.wpi.first.math.kinematics.MecanumDriveWheelPositions;
 import edu.wpi.first.math.kinematics.MecanumDriveWheelSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -23,7 +24,9 @@ import com.ctre.phoenixpro.hardware.TalonFX;
 import com.ctre.phoenixpro.signals.NeutralModeValue;
 
 public class DriveSubsystem extends SubsystemBase {
-  private static final double kMaxSpeed = 8.0;
+  public static final double kMaxSpeed = 8.0;
+  public static final double kMaxRotation = 0.25;
+
   private static final double kWheelDiameter = 0.1524;
   private static final double kGearRatio = 72 / 13;
   private static final double kSpeedToRotationsMultiplier = (1 / (Math.PI * kWheelDiameter)) * kGearRatio;
@@ -57,6 +60,8 @@ public class DriveSubsystem extends SubsystemBase {
 
   private final MecanumDriveOdometry odometry = new MecanumDriveOdometry(kinematics, gyro.getRotation2d(),
       getCurrentPositions());
+
+  private boolean fieldRelative = false;
 
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {
@@ -120,13 +125,34 @@ public class DriveSubsystem extends SubsystemBase {
         .setControl(torqueVelocity.withVelocity(speeds.rearRightMetersPerSecond * kSpeedToRotationsMultiplier));
   }
 
-  public void drive(double x, double y, double z, boolean fieldRelative) {
-    MecanumDriveWheelSpeeds mecanumDriveWheelSpeeds = kinematics.toWheelSpeeds(
-        fieldRelative
-            ? ChassisSpeeds.fromFieldRelativeSpeeds(x, y, z, gyro.getRotation2d())
-            : new ChassisSpeeds(x, y, z));
+  public void drive(ChassisSpeeds chassisSpeeds) {
+    MecanumDriveWheelSpeeds mecanumDriveWheelSpeeds = kinematics.toWheelSpeeds(chassisSpeeds);
     mecanumDriveWheelSpeeds.desaturate(kMaxSpeed);
     setSpeeds(mecanumDriveWheelSpeeds);
+  }
+
+  public void driveTeleop(double x, double y, double z) {
+    x *= kMaxSpeed;
+    y *= kMaxSpeed;
+    z *= kMaxRotation;
+
+    if (fieldRelative) {
+      driveFieldRelative(x, y, z);
+    } else {
+      driveRobotRelative(x, y, z);
+    }
+  }
+
+  private void driveRobotRelative(double x, double y, double z) {
+    drive(new ChassisSpeeds(x, y, z));
+  }
+
+  private void driveFieldRelative(double x, double y, double z) {
+    drive(ChassisSpeeds.fromFieldRelativeSpeeds(x, y, z, gyro.getRotation2d()));
+  }
+
+  private void setFieldRelative(boolean value) {
+    fieldRelative = value;
   }
 
   public void updateOdometry() {
@@ -134,6 +160,15 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public Command driveCommand(double x, double y, double z, boolean fieldRelative) {
-    return new RunCommand(() -> drive(x, y, z, fieldRelative), this);
+    return new RunCommand(
+        fieldRelative ? () -> driveFieldRelative(x, y, z) : () -> driveRobotRelative(x, y, z), this);
+  }
+
+  public Command driveCommand(Supplier<Double> x, Supplier<Double> y, Supplier<Double> z) {
+    return new RunCommand(() -> driveTeleop(x.get(), y.get(), z.get()), this);
+  }
+
+  public Command setFieldRelativeCommand(boolean value) {
+    return new InstantCommand(() -> setFieldRelative(value), this);
   }
 }

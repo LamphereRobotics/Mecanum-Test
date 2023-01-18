@@ -4,46 +4,29 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import frc.robot.subsystems.DriveSubsystem;
 
-public class RobotContainer {
-  private final DriveSubsystem drive;
+import static frc.robot.Constants.Joysticks.Axes.*;
+import static frc.robot.Constants.Joysticks.Buttons.*;
 
-  private final Joystick leftDriveJoystick;
-  private final Joystick rightDriveJoystick;
+public class RobotContainer {
+  private final DriveSubsystem drive = new DriveSubsystem();
 
   public RobotContainer() {
-    drive = new DriveSubsystem();
-
-    leftDriveJoystick = new Joystick(0);
-    rightDriveJoystick = new Joystick(1);
-
-    configureJoysticks();
     configureBindings();
     configureDefaultCommands();
   }
 
-  private void configureJoysticks() {
-
-  }
-
   private void configureBindings() {
-
+    toggleFieldRelativeButton
+        .onTrue(drive.setFieldRelativeCommand(true))
+        .onFalse(drive.setFieldRelativeCommand(false));
   }
 
   private void configureDefaultCommands() {
-    drive.setDefaultCommand(
-        new RunCommand(
-            () -> drive.drive(
-                leftDriveJoystick.getY(),
-                leftDriveJoystick.getX(),
-                rightDriveJoystick.getX(),
-                !leftDriveJoystick.getRawButton(0)),
-            drive));
+    drive.setDefaultCommand(drive.driveCommand(driveForwardAxis, driveLeftAxis, rotateAxis));
   }
 
   public Command getAutonomousCommand() {
