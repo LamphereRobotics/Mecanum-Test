@@ -24,15 +24,19 @@ import com.ctre.phoenixpro.hardware.TalonFX;
 import com.ctre.phoenixpro.signals.NeutralModeValue;
 
 public class DriveSubsystem extends SubsystemBase {
-  private static final double kMaxSpeed = 8.0;
-  private static final double kMaxRotation = 0.25;
-  private static final double kWheelDiameter = 0.1524;
-  private static final double kGearRatio = 72 / 13;
-  private static final double kSpeedToRotationsMultiplier = (1 / (Math.PI * kWheelDiameter)) * kGearRatio;
+  private static final double kMinSpeed = 0.05; // 0.05 meters per second
+  private static final double kMaxSpeed = 8.0; // 8 meters per second
+  private static final double kMaxRotation = Math.PI; // 1/2 rotation per second
+  private static final double kWheelDiameter = 0.1524; // 6 inches = 0.1524 meters
+  private static final double kGearRatio = 72 / 13; // 72 motor rotations per wheel rotation
+  private static final double kSpeedToRotationsMultiplier = (1 / (Math.PI * kWheelDiameter)) * kGearRatio; // meters per second to motor rotations per second
 
   private static final double kP = 5; // An error of 1 rotation per second results in 5 amps output
   private static final double kI = 0.1; // An error of 1 rotation per second increases output by 0.1 amps every second
   private static final double kD = 0.001; // A change of 1000 rotation per second squared results in 1 amp output
+  private static final double kF = 1; // Feed forward to overcome static friction
+
+  // Peak output of 40 amps
   private static final double kPeakCurrent = 40;
 
   private final TalonFX frontLeftMotor = new TalonFX(1);
@@ -81,7 +85,6 @@ public class DriveSubsystem extends SubsystemBase {
     configs.Slot0.kI = kI;
     configs.Slot0.kD = kD;
 
-    // Peak output of 40 amps
     configs.TorqueCurrent.PeakForwardTorqueCurrent = kPeakCurrent;
     configs.TorqueCurrent.PeakReverseTorqueCurrent = -kPeakCurrent;
 
