@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import java.util.function.Supplier;
 
+import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
@@ -42,7 +43,8 @@ public class DriveSubsystem extends SubsystemBase {
   private static final double kP = 5; // An error of 1 rotation per second results in 5 amps output
   private static final double kI = 0.1; // An error of 1 rotation per second increases output by 0.1 amps every second
   private static final double kD = 0.001; // A change of 1000 rotation per second squared results in 1 amp output
-  private static final double kF = 1; // Feed forward to overcome static friction
+  private static final double kF = 1; // Feed forward for velocity
+  private static final double kS = 1; // Arbitrary feed forward to overcome static friction
 
   // Peak output of 40 amps
   private static final double kPeakCurrent = 40;
@@ -136,7 +138,8 @@ public class DriveSubsystem extends SubsystemBase {
     if (Math.abs(speed) < kMinSpeed) {
       speed = 0;
     }
-    motor.set(TalonFXControlMode.Velocity, metersToTalonUnits(speed) / 10);
+    motor.set(TalonFXControlMode.Velocity, metersToTalonUnits(speed) / 10, DemandType.ArbitraryFeedForward,
+        Math.signum(speed) * kS);
   }
 
   public void drive(ChassisSpeeds chassisSpeeds) {
