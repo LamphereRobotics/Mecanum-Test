@@ -17,34 +17,40 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import java.util.function.Supplier;
 
-import com.ctre.phoenixpro.configs.TalonFXConfiguration;
-import com.ctre.phoenixpro.controls.VelocityTorqueCurrentFOC;
-import com.ctre.phoenixpro.hardware.Pigeon2;
-import com.ctre.phoenixpro.hardware.TalonFX;
-import com.ctre.phoenixpro.signals.NeutralModeValue;
+import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
+import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.ctre.phoenix.sensors.AbsoluteSensorRange;
+import com.ctre.phoenix.sensors.SensorInitializationStrategy;
+import com.ctre.phoenix.sensors.WPI_Pigeon2;
 
 public class DriveSubsystem extends SubsystemBase {
   private static final double kMinSpeed = 0.05; // 0.05 meters per second
   private static final double kMaxSpeed = 8.0; // 8 meters per second
-  private static final double kMaxRotation = Math.PI; // 1/2 rotation per second
-  private static final double kWheelDiameter = 0.1524; // 6 inches = 0.1524 meters
-  private static final double kGearRatio = 72 / 13; // 72 motor rotations per wheel rotation
-  // meters per second to motor rotations per second
-  private static final double kSpeedToRotationsMultiplier = (1 / (Math.PI * kWheelDiameter)) * kGearRatio;
+  private static final double kMaxRotationSpeed = Math.PI; // 1/2 rotation per second
 
+  private static final double kTalonUnitsPerRotation = 2048;
+  private static final double kGearRatio = 13 / 72; // 13 wheel rotations per 72 motor rotations
+  private static final double kWheelDiameter = 0.1524; // 6 inches = 0.1524 meters
+  // meters to talon units
+  private static final double kTalonUnitsToMetersMultiplier = (1 / kTalonUnitsPerRotation) // motor rotations
+      * kGearRatio // wheel rotations
+      * Math.PI * kWheelDiameter; // distance
+
+  // TODO: tune this because it wont even be close anymore.
   private static final double kP = 5; // An error of 1 rotation per second results in 5 amps output
   private static final double kI = 0.1; // An error of 1 rotation per second increases output by 0.1 amps every second
   private static final double kD = 0.001; // A change of 1000 rotation per second squared results in 1 amp output
   private static final double kF = 1; // Feed forward to overcome static friction
-  private static final double kOutputRampPeriod = 0; // Seconds to go from 0A to +-40A output
 
   // Peak output of 40 amps
   private static final double kPeakCurrent = 40;
 
-  private final TalonFX frontLeftMotor = new TalonFX(1);
-  private final TalonFX frontRightMotor = new TalonFX(2);
-  private final TalonFX rearLeftMotor = new TalonFX(3);
-  private final TalonFX rearRightMotor = new TalonFX(4);
+  private final WPI_TalonFX frontLeftMotor = new WPI_TalonFX(1);
+  private final WPI_TalonFX frontRightMotor = new WPI_TalonFX(2);
+  private final WPI_TalonFX rearLeftMotor = new WPI_TalonFX(3);
+  private final WPI_TalonFX rearRightMotor = new WPI_TalonFX(4);
 
   private final Translation2d frontLeftLocation = new Translation2d(0.381, 0.381);
   private final Translation2d frontRightLocation = new Translation2d(0.381, -0.381);
@@ -54,19 +60,7 @@ public class DriveSubsystem extends SubsystemBase {
   private final MecanumDriveKinematics kinematics = new MecanumDriveKinematics(
       frontLeftLocation, frontRightLocation, rearLeftLocation, rearRightLocation);
 
-  private final Pigeon2 gyro = new Pigeon2(0);
-
-  private final Supplier<Double> frontLeftVelocity = frontLeftMotor.getVelocity().asSupplier();
-  private final Supplier<Double> frontRightVelocity = frontRightMotor.getVelocity().asSupplier();
-  private final Supplier<Double> rearLeftVelocity = rearLeftMotor.getVelocity().asSupplier();
-  private final Supplier<Double> rearRightVelocity = rearRightMotor.getVelocity().asSupplier();
-
-  private final Supplier<Double> frontLeftPosition = frontLeftMotor.getPosition().asSupplier();
-  private final Supplier<Double> frontRightPosition = frontRightMotor.getPosition().asSupplier();
-  private final Supplier<Double> rearLeftPosition = rearLeftMotor.getPosition().asSupplier();
-  private final Supplier<Double> rearRightPosition = rearRightMotor.getPosition().asSupplier();
-
-  private final VelocityTorqueCurrentFOC torqueVelocity = new VelocityTorqueCurrentFOC(0, 0, 0, false);
+  private final WPI_Pigeon2 gyro = new WPI_Pigeon2(0);
 
   private final MecanumDriveOdometry odometry = new MecanumDriveOdometry(kinematics, gyro.getRotation2d(),
       getCurrentPositions());
@@ -83,20 +77,19 @@ public class DriveSubsystem extends SubsystemBase {
      * Torque-based velocity does not require a feed forward, as torque will
      * accelerate the rotor up to the desired velocity by itself
      */
-    configs.Slot0.kP = kP;
-    configs.Slot0.kI = kI;
-    configs.Slot0.kD = kD;
+    configs.slot0.kP = kP;
+    configs.slot0.kI = kI;
+    configs.slot0.kD = kD;
+    configs.slot0.kF = kF;
 
-    configs.TorqueCurrent.PeakForwardTorqueCurrent = kPeakCurrent;
-    configs.TorqueCurrent.PeakReverseTorqueCurrent = -kPeakCurrent;
+    configs.initializationStrategy = SensorInitializationStrategy.BootToZero;
+    configs.supplyCurrLimit = new SupplyCurrentLimitConfiguration(true, kPeakCurrent, kPeakCurrent, 0);
+    configs.absoluteSensorRange = AbsoluteSensorRange.Signed_PlusMinus180;
 
-    configs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    configs.ClosedLoopRamps.TorqueClosedLoopRampPeriod = (300 / kPeakCurrent) * kOutputRampPeriod;
-
-    frontLeftMotor.getConfigurator().apply(configs);
-    frontRightMotor.getConfigurator().apply(configs);
-    rearLeftMotor.getConfigurator().apply(configs);
-    rearRightMotor.getConfigurator().apply(configs);
+    frontLeftMotor.configAllSettings(configs);
+    frontRightMotor.configAllSettings(configs);
+    rearLeftMotor.configAllSettings(configs);
+    rearRightMotor.configAllSettings(configs);
 
     frontRightMotor.setInverted(true);
     rearRightMotor.setInverted(true);
@@ -108,42 +101,42 @@ public class DriveSubsystem extends SubsystemBase {
     updateOdometry();
   }
 
-  public MecanumDriveWheelSpeeds getCurrentState() {
+  public MecanumDriveWheelSpeeds getCurrentSpeeds() {
     return new MecanumDriveWheelSpeeds(
-        frontLeftVelocity.get(),
-        frontRightVelocity.get(),
-        rearLeftVelocity.get(),
-        rearRightVelocity.get());
+        getMotorSpeed(frontLeftMotor),
+        getMotorSpeed(frontRightMotor),
+        getMotorSpeed(rearLeftMotor),
+        getMotorSpeed(rearRightMotor));
+  }
+
+  private double getMotorSpeed(WPI_TalonFX motor) {
+    return talonUnitsToMeters(rearRightMotor.getSelectedSensorVelocity()) * 10;
   }
 
   public MecanumDriveWheelPositions getCurrentPositions() {
     return new MecanumDriveWheelPositions(
-        frontLeftPosition.get(),
-        frontRightPosition.get(),
-        rearLeftPosition.get(),
-        rearRightPosition.get());
+        getMotorPosition(frontLeftMotor),
+        getMotorPosition(frontRightMotor),
+        getMotorPosition(rearLeftMotor),
+        getMotorPosition(rearRightMotor));
+  }
+
+  private double getMotorPosition(WPI_TalonFX motor) {
+    return talonUnitsToMeters(rearRightMotor.getSelectedSensorPosition());
   }
 
   public void setSpeeds(MecanumDriveWheelSpeeds speeds) {
-    setMotorVelocity(frontLeftMotor, speeds.frontLeftMetersPerSecond);
-    setMotorVelocity(frontRightMotor, speeds.frontRightMetersPerSecond);
-    setMotorVelocity(rearLeftMotor, speeds.rearLeftMetersPerSecond);
-    setMotorVelocity(rearRightMotor, speeds.rearRightMetersPerSecond);
+    setMotorSpeed(frontLeftMotor, speeds.frontLeftMetersPerSecond);
+    setMotorSpeed(frontRightMotor, speeds.frontRightMetersPerSecond);
+    setMotorSpeed(rearLeftMotor, speeds.rearLeftMetersPerSecond);
+    setMotorSpeed(rearRightMotor, speeds.rearRightMetersPerSecond);
   }
 
-  private void setMotorVelocity(TalonFX motor, double speed) {
-    double feedForward = 0;
+  private void setMotorSpeed(WPI_TalonFX motor, double speed) {
     if (Math.abs(speed) < kMinSpeed) {
       speed = 0;
-    } else if (speed > 0) {
-      feedForward = kF;
-    } else {
-      feedForward = -kF;
     }
-    motor
-        .setControl(torqueVelocity
-            .withVelocity(speed * kSpeedToRotationsMultiplier)
-            .withFeedForward(feedForward));
+    motor.set(TalonFXControlMode.Velocity, metersToTalonUnits(speed) / 10);
   }
 
   public void drive(ChassisSpeeds chassisSpeeds) {
@@ -155,7 +148,7 @@ public class DriveSubsystem extends SubsystemBase {
   public void driveTeleop(double x, double y, double z) {
     x *= kMaxSpeed;
     y *= kMaxSpeed;
-    z *= kMaxRotation;
+    z *= kMaxRotationSpeed;
 
     if (fieldRelative) {
       driveFieldRelative(x, y, z);
@@ -191,5 +184,13 @@ public class DriveSubsystem extends SubsystemBase {
 
   public Command setFieldRelativeCommand(boolean value) {
     return new InstantCommand(() -> setFieldRelative(value), this);
+  }
+
+  private static double metersToTalonUnits(double meters) {
+    return meters / kTalonUnitsToMetersMultiplier;
+  }
+
+  private static double talonUnitsToMeters(double talonUnits) {
+    return talonUnits * kTalonUnitsToMetersMultiplier;
   }
 }

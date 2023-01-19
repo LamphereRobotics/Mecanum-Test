@@ -1,21 +1,52 @@
 {
-    "fileName": "PhoenixPro.json",
-    "name": "CTRE-Phoenix (Pro)",
-    "version": "23.0.4",
+    "fileName": "Phoenix.json",
+    "name": "CTRE-Phoenix (v5)",
+    "version": "5.30.3+23.0.4",
     "frcYear": 2023,
-    "uuid": "e995de00-2c64-4df5-8831-c1441420ff19",
+    "uuid": "ab676553-b602-441f-a38d-f1296eff6537",
     "mavenUrls": [
         "https://maven.ctr-electronics.com/release/"
     ],
-    "jsonUrl": "https://maven.ctr-electronics.com/release/com/ctre/phoenixpro/PhoenixPro-frc2023-latest.json",
+    "jsonUrl": "https://maven.ctr-electronics.com/release/com/ctre/phoenix/Phoenix5-frc2023-latest.json",
     "javaDependencies": [
         {
-            "groupId": "com.ctre.phoenixpro",
+            "groupId": "com.ctre.phoenix",
+            "artifactId": "api-java",
+            "version": "5.30.3"
+        },
+        {
+            "groupId": "com.ctre.phoenix",
             "artifactId": "wpiapi-java",
-            "version": "23.0.4"
+            "version": "5.30.3"
         }
     ],
     "jniDependencies": [
+        {
+            "groupId": "com.ctre.phoenix",
+            "artifactId": "cci",
+            "version": "5.30.3",
+            "isJar": false,
+            "skipInvalidPlatforms": true,
+            "validPlatforms": [
+                "windowsx86-64",
+                "linuxx86-64",
+                "linuxathena"
+            ],
+            "simMode": "hwsim"
+        },
+        {
+            "groupId": "com.ctre.phoenix.sim",
+            "artifactId": "cci-sim",
+            "version": "5.30.3",
+            "isJar": false,
+            "skipInvalidPlatforms": true,
+            "validPlatforms": [
+                "windowsx86-64",
+                "linuxx86-64",
+                "osxuniversal"
+            ],
+            "simMode": "swsim"
+        },
         {
             "groupId": "com.ctre.phoenixpro",
             "artifactId": "tools",
@@ -149,10 +180,40 @@
     ],
     "cppDependencies": [
         {
-            "groupId": "com.ctre.phoenixpro",
+            "groupId": "com.ctre.phoenix",
             "artifactId": "wpiapi-cpp",
-            "version": "23.0.4",
-            "libName": "CTRE_PhoenixPro_WPI",
+            "version": "5.30.3",
+            "libName": "CTRE_Phoenix_WPI",
+            "headerClassifier": "headers",
+            "sharedLibrary": true,
+            "skipInvalidPlatforms": true,
+            "binaryPlatforms": [
+                "windowsx86-64",
+                "linuxx86-64",
+                "linuxathena"
+            ],
+            "simMode": "hwsim"
+        },
+        {
+            "groupId": "com.ctre.phoenix",
+            "artifactId": "api-cpp",
+            "version": "5.30.3",
+            "libName": "CTRE_Phoenix",
+            "headerClassifier": "headers",
+            "sharedLibrary": true,
+            "skipInvalidPlatforms": true,
+            "binaryPlatforms": [
+                "windowsx86-64",
+                "linuxx86-64",
+                "linuxathena"
+            ],
+            "simMode": "hwsim"
+        },
+        {
+            "groupId": "com.ctre.phoenix",
+            "artifactId": "cci",
+            "version": "5.30.3",
+            "libName": "CTRE_PhoenixCCI",
             "headerClassifier": "headers",
             "sharedLibrary": true,
             "skipInvalidPlatforms": true,
@@ -179,10 +240,40 @@
             "simMode": "hwsim"
         },
         {
-            "groupId": "com.ctre.phoenixpro.sim",
+            "groupId": "com.ctre.phoenix.sim",
             "artifactId": "wpiapi-cpp-sim",
-            "version": "23.0.4",
-            "libName": "CTRE_PhoenixPro_WPISim",
+            "version": "5.30.3",
+            "libName": "CTRE_Phoenix_WPISim",
+            "headerClassifier": "headers",
+            "sharedLibrary": true,
+            "skipInvalidPlatforms": true,
+            "binaryPlatforms": [
+                "windowsx86-64",
+                "linuxx86-64",
+                "osxuniversal"
+            ],
+            "simMode": "swsim"
+        },
+        {
+            "groupId": "com.ctre.phoenix.sim",
+            "artifactId": "api-cpp-sim",
+            "version": "5.30.3",
+            "libName": "CTRE_PhoenixSim",
+            "headerClassifier": "headers",
+            "sharedLibrary": true,
+            "skipInvalidPlatforms": true,
+            "binaryPlatforms": [
+                "windowsx86-64",
+                "linuxx86-64",
+                "osxuniversal"
+            ],
+            "simMode": "swsim"
+        },
+        {
+            "groupId": "com.ctre.phoenix.sim",
+            "artifactId": "cci-sim",
+            "version": "5.30.3",
+            "libName": "CTRE_PhoenixCCISim",
             "headerClassifier": "headers",
             "sharedLibrary": true,
             "skipInvalidPlatforms": true,
