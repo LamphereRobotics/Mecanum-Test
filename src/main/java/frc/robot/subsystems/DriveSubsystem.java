@@ -31,8 +31,8 @@ public class DriveSubsystem extends SubsystemBase {
   private static final double kMaxSpeed = 8.0; // 8 meters per second
   private static final double kMaxRotationSpeed = Math.PI; // 1/2 rotation per second
 
-  private static final double kTalonUnitsPerRotation = 2048;
-  private static final double kGearRatio = 13 / 72; // 13 wheel rotations per 72 motor rotations
+  private static final double kTalonUnitsPerRotation = 2048.0;
+  private static final double kGearRatio = 13.0 / 72.0; // 13 wheel rotations per 72 motor rotations
   private static final double kWheelDiameter = 0.1524; // 6 inches = 0.1524 meters
   // meters to talon units
   private static final double kTalonUnitsToMetersMultiplier = (1 / kTalonUnitsPerRotation) // motor rotations
@@ -43,11 +43,11 @@ public class DriveSubsystem extends SubsystemBase {
   private static final double kP = 5; // An error of 1 rotation per second results in 5 amps output
   private static final double kI = 0.1; // An error of 1 rotation per second increases output by 0.1 amps every second
   private static final double kD = 0.001; // A change of 1000 rotation per second squared results in 1 amp output
-  private static final double kF = 1; // Feed forward for velocity
+  private static final double kF = 0.04727; // Feed forward for velocity
   private static final double kS = 1; // Arbitrary feed forward to overcome static friction
 
   // Peak output of 40 amps
-  private static final double kPeakCurrent = 40;
+  private static final double kPeakCurrent = 40.0;
 
   private final WPI_TalonFX frontLeftMotor = new WPI_TalonFX(1);
   private final WPI_TalonFX frontRightMotor = new WPI_TalonFX(2);
