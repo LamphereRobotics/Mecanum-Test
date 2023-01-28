@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.MecanumDriveKinematics;
@@ -18,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.function.Supplier;
 
 import com.ctre.phoenix.motorcontrol.DemandType;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
@@ -27,12 +29,12 @@ import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 import com.ctre.phoenix.sensors.WPI_Pigeon2;
 
 public class DriveSubsystem extends SubsystemBase {
-  private static final double kMinSpeed = 0.05; // 0.05 meters per second
-  private static final double kMaxSpeed = 8.0; // 8 meters per second
+  private static final double kMinSpeed = 0.095; // 0.095 meters per second
+  private static final double kMaxSpeed = 10; // 10 meters per second
   private static final double kMaxRotationSpeed = Math.PI; // 1/2 rotation per second
 
   private static final double kTalonUnitsPerRotation = 2048.0;
-  private static final double kGearRatio = 13.0 / 72.0; // 13 wheel rotations per 72 motor rotations
+  private static final double kGearRatio = 14.0 / 70.0; // 13 wheel rotations per 72 motor rotations
   private static final double kWheelDiameter = 0.1524; // 6 inches = 0.1524 meters
   // meters to talon units
   private static final double kTalonUnitsToMetersMultiplier = (1 / kTalonUnitsPerRotation) // motor rotations
@@ -40,14 +42,16 @@ public class DriveSubsystem extends SubsystemBase {
       * Math.PI * kWheelDiameter; // distance
 
   // TODO: tune this because it wont even be close anymore.
-  private static final double kP = 5; // An error of 1 rotation per second results in 5 amps output
-  private static final double kI = 0.1; // An error of 1 rotation per second increases output by 0.1 amps every second
-  private static final double kD = 0.001; // A change of 1000 rotation per second squared results in 1 amp output
-  private static final double kF = 0.04727; // Feed forward for velocity
-  private static final double kS = 1; // Arbitrary feed forward to overcome static friction
+  private static final double kP = 0.0; // An error of 1 rotation per second results in 5 amps output
+  private static final double kI = 0.0; // An error of 1 rotation per second increases output by 0.1 amps every second
+  private static final double kD = 0.0; // A change of 1000 rotation per second squared results in 1 amp output
+  private static final double kF = 0.0453; // Feed forward for velocity
+  private static final double rearLeftkF = 0.04513; // Feed forward for velocity
+  private static final double rearRightkF = 0.04512; // Feed forward for velocity
+  private static final double kS = 0.02; // Arbitrary feed forward to overcome static friction
 
   // Peak output of 40 amps
-  private static final double kPeakCurrent = 40.0;
+  private static final double kPeakCurrent = 20.0;
 
   private final WPI_TalonFX frontLeftMotor = new WPI_TalonFX(1);
   private final WPI_TalonFX frontRightMotor = new WPI_TalonFX(2);
@@ -62,12 +66,17 @@ public class DriveSubsystem extends SubsystemBase {
   private final MecanumDriveKinematics kinematics = new MecanumDriveKinematics(
       frontLeftLocation, frontRightLocation, rearLeftLocation, rearRightLocation);
 
-  private final WPI_Pigeon2 gyro = new WPI_Pigeon2(0);
+  private final static WPI_Pigeon2 gyro = new WPI_Pigeon2(0);
+
+  public static Rotation2d rotation() {
+    return gyro.getRotation2d();
+  }
 
   private final MecanumDriveOdometry odometry = new MecanumDriveOdometry(kinematics, gyro.getRotation2d(),
       getCurrentPositions());
 
   private boolean fieldRelative = false;
+  private double speedLimit = 5.0;
 
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {
@@ -87,14 +96,22 @@ public class DriveSubsystem extends SubsystemBase {
     configs.initializationStrategy = SensorInitializationStrategy.BootToZero;
     configs.supplyCurrLimit = new SupplyCurrentLimitConfiguration(true, kPeakCurrent, kPeakCurrent, 0);
     configs.absoluteSensorRange = AbsoluteSensorRange.Signed_PlusMinus180;
+    configs.neutralDeadband = 0.019;
 
     frontLeftMotor.configAllSettings(configs);
     frontRightMotor.configAllSettings(configs);
+    configs.slot0.kF = rearLeftkF;
     rearLeftMotor.configAllSettings(configs);
+    configs.slot0.kF = rearRightkF;
     rearRightMotor.configAllSettings(configs);
 
-    frontRightMotor.setInverted(true);
-    rearRightMotor.setInverted(true);
+    frontLeftMotor.setInverted(true);
+    rearLeftMotor.setInverted(true);
+
+    frontLeftMotor.setNeutralMode(NeutralMode.Brake);
+    frontRightMotor.setNeutralMode(NeutralMode.Brake);
+    rearLeftMotor.setNeutralMode(NeutralMode.Brake);
+    rearRightMotor.setNeutralMode(NeutralMode.Brake);
   }
 
   @Override
@@ -149,8 +166,8 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public void driveTeleop(double x, double y, double z) {
-    x *= kMaxSpeed;
-    y *= kMaxSpeed;
+    x *= speedLimit;
+    y *= speedLimit;
     z *= kMaxRotationSpeed;
 
     if (fieldRelative) {
@@ -168,8 +185,16 @@ public class DriveSubsystem extends SubsystemBase {
     drive(ChassisSpeeds.fromFieldRelativeSpeeds(x, y, z, gyro.getRotation2d()));
   }
 
+  public void driveFieldRelativeCommand(double x, double y, double z) {
+    drive(ChassisSpeeds.fromFieldRelativeSpeeds(x, y, z, gyro.getRotation2d()));
+  }
+
   private void setFieldRelative(boolean value) {
     fieldRelative = value;
+  }
+
+  private void setSpeedLimit(double value) {
+    speedLimit = value;
   }
 
   public void updateOdometry() {
@@ -187,6 +212,10 @@ public class DriveSubsystem extends SubsystemBase {
 
   public Command setFieldRelativeCommand(boolean value) {
     return new InstantCommand(() -> setFieldRelative(value), this);
+  }
+
+  public Command setSpeedLimitCommand(double value) {
+    return new InstantCommand(() -> setSpeedLimit(value), this);
   }
 
   private static double metersToTalonUnits(double meters) {

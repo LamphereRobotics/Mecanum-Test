@@ -23,6 +23,12 @@ public class RobotContainer {
     toggleFieldRelativeButton
         .onTrue(drive.setFieldRelativeCommand(true))
         .onFalse(drive.setFieldRelativeCommand(false));
+    lowSpeedButton
+        .onTrue(drive.setSpeedLimitCommand(2.5))
+        .onFalse(drive.setSpeedLimitCommand(5));
+    highSpeedButton
+        .onTrue(drive.setSpeedLimitCommand(10))
+        .onFalse(drive.setSpeedLimitCommand(5));
   }
 
   private void configureDefaultCommands() {
