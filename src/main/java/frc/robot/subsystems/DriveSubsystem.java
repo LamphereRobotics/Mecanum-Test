@@ -215,6 +215,10 @@ public class DriveSubsystem extends SubsystemBase {
   public Command setFieldRelativeCommand(boolean value) {
     return new InstantCommand(() -> setFieldRelative(value), this);
   }
+  
+  public Command toggleFieldRelativeCommand() {
+    return new InstantCommand(() -> setFieldRelative(!fieldRelative), this);
+  }
 
   public Command setSpeedLimitCommand(double value) {
     return new InstantCommand(() -> setSpeedLimit(value), this);

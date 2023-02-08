@@ -23,8 +23,7 @@ public class RobotContainer {
 
   private void configureBindings() {
     toggleFieldRelativeButton
-        .onTrue(drive.setFieldRelativeCommand(true))
-        .onFalse(drive.setFieldRelativeCommand(false));
+        .onTrue(drive.toggleFieldRelativeCommand());
     lowSpeedButton
         .onTrue(drive.setSpeedLimitCommand(2.5))
         .onFalse(drive.setSpeedLimitCommand(5));
@@ -33,7 +32,6 @@ public class RobotContainer {
         .onFalse(drive.setSpeedLimitCommand(5));
     gyroResetButton
     .onTrue(new InstantCommand(drive::resetGyro));
-    
   }
 
   private void configureDefaultCommands() {
