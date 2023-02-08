@@ -4,8 +4,10 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.subsystems.DriveSubsystem;
 
 import static frc.robot.Constants.Joysticks.Axes.*;
@@ -29,6 +31,9 @@ public class RobotContainer {
     highSpeedButton
         .onTrue(drive.setSpeedLimitCommand(10))
         .onFalse(drive.setSpeedLimitCommand(5));
+    gyroResetButton
+    .onTrue(new InstantCommand(drive::resetGyro));
+    
   }
 
   private void configureDefaultCommands() {

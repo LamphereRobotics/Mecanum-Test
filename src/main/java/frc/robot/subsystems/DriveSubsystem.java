@@ -71,11 +71,13 @@ public class DriveSubsystem extends SubsystemBase {
   public static Rotation2d rotation() {
     return gyro.getRotation2d();
   }
-
+  public void resetGyro(){
+    gyro.reset();
+  }
   private final MecanumDriveOdometry odometry = new MecanumDriveOdometry(kinematics, gyro.getRotation2d(),
       getCurrentPositions());
 
-  private boolean fieldRelative = false;
+  private boolean fieldRelative = true;
   private double speedLimit = 5.0;
 
   /** Creates a new DriveSubsystem. */
