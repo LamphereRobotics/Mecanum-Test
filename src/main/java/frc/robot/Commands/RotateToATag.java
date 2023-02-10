@@ -21,15 +21,13 @@ public class RotateToATag extends SequentialCommandGroup {
   public RotateToATag(DriveSubsystem driveSub) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
-    double xSpeed;
-    double ySpeed;
-    double zSpeed;
+
     m_driveSub = driveSub;
    
     addRequirements(driveSub);
     
     addCommands(
-    new RotateToTarget(m_driveSub)
+    new RotateToTarget(m_driveSub).withTimeout(3.5)
     );
 
     

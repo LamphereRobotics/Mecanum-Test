@@ -26,13 +26,13 @@ public class RotateToTarget extends CommandBase {
   public void execute() {
     double xDist = Sensors.x.get();
     if(xDist < 10 && xDist > -10){   
-      m_driveSub.driveCommand(0, 0, 0, isFinished());
+      m_driveSub.driveCommand(0, 0, 0, true);
       done = true;
         }else{
             if(xDist > 0){
-              m_driveSub.driveCommand(0, 0, -0.05, xDist > 0);
+              m_driveSub.driveCommand(0, 0, -0.05, true);
             }else{
-              m_driveSub.driveCommand(0, 0, -0.05, xDist < 0);
+              m_driveSub.driveCommand(0, 0, 0.05, true);
      }
     }
   }
