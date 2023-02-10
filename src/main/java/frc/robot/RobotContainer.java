@@ -24,6 +24,9 @@ public class RobotContainer {
   private void configureBindings() {
     toggleFieldRelativeButton
         .onTrue(drive.toggleFieldRelativeCommand());
+    minSpeedButton
+        .onTrue(drive.setSpeedLimitCommand(0.5))
+        .onFalse(drive.setSpeedLimitCommand(5));
     lowSpeedButton
         .onTrue(drive.setSpeedLimitCommand(2.5))
         .onFalse(drive.setSpeedLimitCommand(5));

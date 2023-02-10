@@ -16,6 +16,7 @@ import frc.robot.subsystems.Sensors;
 
 public class RotateToATag extends SequentialCommandGroup {
   private final DriveSubsystem m_driveSub;
+ 
   /** Creates a new RotateToAprilTag. */
   public RotateToATag(DriveSubsystem driveSub) {
     // Add your commands in the addCommands() call, e.g.
@@ -24,9 +25,11 @@ public class RotateToATag extends SequentialCommandGroup {
     double ySpeed;
     double zSpeed;
     m_driveSub = driveSub;
+   
     addRequirements(driveSub);
-    addCommands(
     
+    addCommands(
+    new RotateToTarget(m_driveSub)
     );
 
     

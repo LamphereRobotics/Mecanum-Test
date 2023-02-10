@@ -13,6 +13,7 @@ public class Constants {
 
     public static class Buttons {
       public static final JoystickButton toggleFieldRelativeButton = new JoystickButton(singleDriveJoystick, 1);
+      public static final JoystickButton minSpeedButton = new JoystickButton(singleDriveJoystick, 4);
       public static final JoystickButton lowSpeedButton = new JoystickButton(singleDriveJoystick, 5);
       public static final JoystickButton highSpeedButton = new JoystickButton(singleDriveJoystick, 6);
       public static final JoystickButton gyroResetButton = new JoystickButton(singleDriveJoystick, 8);
