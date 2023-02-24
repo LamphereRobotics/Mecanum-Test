@@ -3,12 +3,8 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.subsystems.Sensors;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:

@@ -3,8 +3,6 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot;
-
-import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -35,6 +33,7 @@ public class RobotContainer {
         .onFalse(drive.setSpeedLimitCommand(5));
     gyroResetButton
     .onTrue(new InstantCommand(drive::resetGyro));
+    
   }
 
   private void configureDefaultCommands() {

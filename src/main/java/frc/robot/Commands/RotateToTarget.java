@@ -12,6 +12,7 @@ public class RotateToTarget extends CommandBase {
   private final DriveSubsystem m_driveSub;
   private boolean done = false;
   private double kP = 0.5;
+  PIDController pid = new PIDController(kP, 0, 0);
   /** Creates a new RotateToTarget. */
   public RotateToTarget(DriveSubsystem driveSub) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -27,7 +28,7 @@ public class RotateToTarget extends CommandBase {
   @Override
   public void execute() {
     double xDist = Sensors.x.get();
-    PIDController pid = new PIDController(kP, 0, 0);
+    
     if(xDist < 0.1 && xDist > -0.1){   
       m_driveSub.driveCommand(0, 0, 0, true);
       done = true;
@@ -38,6 +39,7 @@ public class RotateToTarget extends CommandBase {
               m_driveSub.driveCommand(0, 0, pid.calculate(xDist, 0), true);
      }
     }
+   
   }
 
   // Called once the command ends or is interrupted.
