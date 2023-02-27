@@ -33,10 +33,10 @@ public class Constants {
       public static final int k_rearLeftMotor = 3;
       public static final int k_rearRightMotor = 4;
       //Victors
-      public static final int k_topIntakeMotor = 1;
-      public static final int k_midIntakeMotor = 2;
-      public static final int k_bottomIntakeMotor = 3;
-      public static final int k_extenderMotor = 4;
+      public static final int k_topIntakeMotor = 5;
+      public static final int k_midIntakeMotor = 6;
+      public static final int k_bottomIntakeMotor = 7;
+      public static final int k_extenderMotor = 8;
 
     }
 
