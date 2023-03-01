@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+import static frc.robot.Constants.Joysticks.Axes.*;
 public class Intake extends SubsystemBase {
   WPI_VictorSPX topIntake = new WPI_VictorSPX(7);
   WPI_VictorSPX middleIntake = new WPI_VictorSPX(6);
@@ -16,26 +17,39 @@ public class Intake extends SubsystemBase {
   public Intake() {}
 
   public void startIntakeMotors(){
-    bottomIntake.set(ControlMode.PercentOutput, 0.75);
+    bottomIntake.set(ControlMode.PercentOutput, -0.83);
   }
 
   public void startShooterMotors(){
-    topIntake.set(ControlMode.PercentOutput, 0.75);
-    middleIntake.set(ControlMode.PercentOutput, 0.65);
+    topIntake.set(ControlMode.PercentOutput, -0.8);
+    middleIntake.set(ControlMode.PercentOutput, -0.7);
   }
 
-  public void stopIntakeMotor(){
+  public void stopIntakeMotors(){
     bottomIntake.set(ControlMode.PercentOutput, 0);
   }
   
-  public void stopMotors(){
+  public void stopShooterMotors(){
     topIntake.set(ControlMode.PercentOutput, 0);
     middleIntake.set(ControlMode.PercentOutput, 0);
-    bottomIntake.set(ControlMode.PercentOutput, 0);
   }
 
   @Override
   public void periodic() {
+    if(leftTriggerAxis.get() > 0.2){
+      startIntakeMotors();
+  }else{
+    
+  }
+  if(leftTriggerAxis.get() < 0.2 && rightTriggerAxis.get() < 0.2){
+    stopIntakeMotors();
+  }
+  if(rightTriggerAxis.get() > 0.2){
+    startShooterMotors();
+    startIntakeMotors();
+}else{
+  stopShooterMotors();
+}
     // This method will be called once per scheduler run
   }
 }

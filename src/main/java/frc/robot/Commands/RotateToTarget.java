@@ -29,16 +29,16 @@ public class RotateToTarget extends CommandBase {
   public void execute() {
     double xDist = Sensors.x.get();
     
-    if(xDist < 0.1 && xDist > -0.1){   
-      m_driveSub.driveCommand(0, 0, 0, true);
-      done = true;
-        }else{
-            if(xDist > 0){
-              m_driveSub.driveCommand(0, 0, pid.calculate(xDist, 0), true);
-            }else{
-              m_driveSub.driveCommand(0, 0, pid.calculate(xDist, 0), true);
-     }
-    }
+    // if(xDist < 0.1 && xDist > -0.1){   
+    //   m_driveSub.driveCommand(0, 0, 0, true);
+    //   done = true;
+    //     }else{
+    //         if(xDist > 0){
+    //           m_driveSub.driveCommand(0, 0, pid.calculate(xDist, 0), true);
+    //         }else{
+    //           m_driveSub.driveCommand(0, 0, pid.calculate(xDist, 0), true);
+    //  }
+   // }
    
   }
 

@@ -58,11 +58,15 @@ public class DriveSubsystem extends SubsystemBase {
   private final WPI_TalonFX rearLeftMotor = new WPI_TalonFX(3);
   private final WPI_TalonFX rearRightMotor = new WPI_TalonFX(4);
 
-  private final Translation2d frontLeftLocation = new Translation2d(0.381, 0.381);
-  private final Translation2d frontRightLocation = new Translation2d(0.381, -0.381);
-  private final Translation2d rearLeftLocation = new Translation2d(-0.381, 0.381);
-  private final Translation2d rearRightLocation = new Translation2d(-0.381, -0.381);
+  // private final Translation2d frontLeftLocation = new Translation2d(0.381, 0.381);
+  // private final Translation2d frontRightLocation = new Translation2d(0.381, -0.381);
+  // private final Translation2d rearLeftLocation = new Translation2d(-0.381, 0.381);
+  // private final Translation2d rearRightLocation = new Translation2d(-0.381, -0.381);
 
+  private final Translation2d frontLeftLocation = new Translation2d(0.231775, 0.310134);
+  private final Translation2d frontRightLocation = new Translation2d(0.231775, -0.310134);
+  private final Translation2d rearLeftLocation = new Translation2d(-0.231775, 0.310134);
+  private final Translation2d rearRightLocation = new Translation2d(-0.231775, -0.310134);
   private final MecanumDriveKinematics kinematics = new MecanumDriveKinematics(
       frontLeftLocation, frontRightLocation, rearLeftLocation, rearRightLocation);
 
@@ -107,9 +111,9 @@ public class DriveSubsystem extends SubsystemBase {
     configs.slot0.kF = rearRightkF;
     rearRightMotor.configAllSettings(configs);
 
-    frontLeftMotor.setInverted(true);
+    //frontLeftMotor.setInverted(true);
     rearLeftMotor.setInverted(true);
-
+    frontRightMotor.setInverted(true);
     frontLeftMotor.setNeutralMode(NeutralMode.Brake);
     frontRightMotor.setNeutralMode(NeutralMode.Brake);
     rearLeftMotor.setNeutralMode(NeutralMode.Brake);
