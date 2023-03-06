@@ -4,8 +4,8 @@
 
 package frc.robot;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.robot.Commands.Auton;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Intake;
 
@@ -14,6 +14,7 @@ import static frc.robot.Constants.Joysticks.Buttons.*;
 
 public class RobotContainer {
   private final DriveSubsystem drive = new DriveSubsystem();
+  private final Auton auton = new Auton(drive);
   private final Intake intake = new Intake();
   public RobotContainer() {
     configureBindings();
@@ -46,15 +47,10 @@ public class RobotContainer {
     drive.setDefaultCommand(drive.driveCommand(driveForwardAxis, driveLeftAxis, rotateAxis));
     
   
-  if(leftTriggerAxis.get()>0.1){
-    intake.startIntakeMotors();
-  }else{
-    intake.stopIntakeMotors();
-  }
   
   }
 
   public Command getAutonomousCommand() {
-    return Commands.print("No autonomous command configured");
+    return auton;
   }
 }

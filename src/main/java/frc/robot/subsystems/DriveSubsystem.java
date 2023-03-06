@@ -41,7 +41,7 @@ public class DriveSubsystem extends SubsystemBase {
       * kGearRatio // wheel rotations
       * Math.PI * kWheelDiameter; // distance
 
-  // TODO: tune this because it wont even be close anymore.
+  // TODO: tune  this because it wont even be close anymore.
   private static final double kP = 0.0; // An error of 1 rotation per second results in 5 amps output
   private static final double kI = 0.0; // An error of 1 rotation per second increases output by 0.1 amps every second
   private static final double kD = 0.0; // A change of 1000 rotation per second squared results in 1 amp output
@@ -50,7 +50,7 @@ public class DriveSubsystem extends SubsystemBase {
   private static final double rearRightkF = 0.04512; // Feed forward for velocity
   private static final double kS = 0.02; // Arbitrary feed forward to overcome static friction
 
-  // Peak output of 40 amps
+  // Peak output of 40 amps 
   private static final double kPeakCurrent = 20.0;
 
   private final WPI_TalonFX frontLeftMotor = new WPI_TalonFX(1);

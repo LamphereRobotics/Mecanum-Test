@@ -17,7 +17,7 @@ public class Intake extends SubsystemBase {
   public Intake() {}
 
   public void startIntakeMotors(){
-    bottomIntake.set(ControlMode.PercentOutput, -0.83);
+    bottomIntake.set(ControlMode.PercentOutput, 0.75);
   }
 
   public void startShooterMotors(){

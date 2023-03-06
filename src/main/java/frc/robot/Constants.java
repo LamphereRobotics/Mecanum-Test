@@ -15,7 +15,7 @@ public class Constants {
       public static final Supplier<Double> driveLeftAxis = () -> -singleDriveJoystick.getRawAxis(0);
       public static final Supplier<Double> leftTriggerAxis = () -> singleDriveJoystick.getRawAxis(2);
       public static final Supplier<Double> rightTriggerAxis = () -> singleDriveJoystick.getRawAxis(3);
-      public static final Supplier<Double> rotateAxis = () -> -singleDriveJoystick.getRawAxis(4) * 0.025;
+      public static final Supplier<Double> rotateAxis = () -> -singleDriveJoystick.getRawAxis(4);
     }
     public static class Buttons {
       public static final JoystickButton toggleFieldRelativeButton = new JoystickButton(singleDriveJoystick, 1);
