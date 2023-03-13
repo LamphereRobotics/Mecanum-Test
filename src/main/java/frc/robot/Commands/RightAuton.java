@@ -5,19 +5,23 @@
 package frc.robot.Commands;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+
 import frc.robot.subsystems.DriveSubsystem;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class Auton extends SequentialCommandGroup {
+public class RightAuton extends SequentialCommandGroup {
   private final DriveSubsystem m_driveSub;
   /** Creates a new Auton. */
-  public Auton(DriveSubsystem driveSub) {
+  public RightAuton(DriveSubsystem driveSub, String runChar) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     m_driveSub = driveSub;
     addRequirements(driveSub);
-    addCommands(m_driveSub.driveCommand(1, 1, 1, true).withTimeout(1) ,m_driveSub.driveCommand(0, 0, 0, true).withTimeout(0.1));
+   
+    addCommands(m_driveSub.driveCommand(0, 0, 0, true).withTimeout(0.1));
+    
   }
+  
 }

@@ -5,6 +5,8 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import frc.robot.Constants.Motors;
 public class Extender extends SubsystemBase {
@@ -12,11 +14,14 @@ public class Extender extends SubsystemBase {
   /** Creates a new Extender. */
   
   public Extender() {}
-  public void Grab(){
-    
+  public void Extend(){
+    extender.set(ControlMode.PercentOutput, 0.5);
   }
-  public void UnGrab(){
-
+  public void UnExtend(){
+    extender.set(ControlMode.PercentOutput, -0.5);
+  }
+  public void Stop(){
+    extender.set(ControlMode.PercentOutput, 0);
   }
 
 

@@ -4,10 +4,9 @@
 
 package frc.robot.Commands;
 
-import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Intake;
-
+import static frc.robot.Constants.Joysticks.Axes.*;
 public class ShooterIntakeControl extends CommandBase {
   private final Intake m_Intake;
   /** Creates a new ShooterIntakeControl. */
@@ -24,23 +23,21 @@ public class ShooterIntakeControl extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-//     if(leftTriggerAxis.get() > 0.2){
-//        m_Intake.startIntakeMotors();
-//   }else{
-    
-//   }
-//   if(leftTriggerAxis.get() < 0.2 && rightTriggerAxis.get() < 0.2){
-//     m_Intake.stopIntakeMotors();
-//   }
-//   if(rightTriggerAxis.get() > 0.2){
-//     m_Intake.startShooterMotors();
-//     m_Intake.startIntakeMotors();
-// }else{
-//   m_Intake.stopShooterMotors();
-// }
+    if(leftTriggerAxis.get() > 0.2){
+       m_Intake.startIntakeMotors();
+    }
 
+    if(leftTriggerAxis.get() < 0.2 && rightTriggerAxis.get() < 0.2){
+      m_Intake.stopIntakeMotors();
+    }
+  
+    if(rightTriggerAxis.get() > 0.2){
+      m_Intake.startShooterMotors();
+      m_Intake.startIntakeMotors();
+  } else{
+      m_Intake.stopShooterMotors();
   }
-
+  }
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {}
