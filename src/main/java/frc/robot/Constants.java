@@ -28,6 +28,8 @@ public class Constants {
       public static final JoystickButton intakeButton = new JoystickButton(operatorJoystick, 10);
       public static final JoystickButton extendButton = new JoystickButton(operatorJoystick, 1);
       public static final JoystickButton retractButton = new JoystickButton(operatorJoystick, 4);
+      public static final JoystickButton grabButton = new JoystickButton(operatorJoystick, 5);
+      public static final JoystickButton dropButton = new JoystickButton(operatorJoystick, 6);
       public static final Trigger rejectButton = new JoystickButton(operatorJoystick, 3);
     }
   }

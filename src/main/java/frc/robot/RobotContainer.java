@@ -10,6 +10,7 @@ import frc.robot.Commands.RightAuton;
 //import frc.robot.Commands.ShooterIntakeControl;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Extender;
+import frc.robot.subsystems.Grabber;
 import frc.robot.subsystems.Intake;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -27,6 +28,7 @@ public class RobotContainer {
   private final Command kCustomAuto = rAuton;
   public static SendableChooser<Command> m_chooser = new SendableChooser<>();
   private final Extender extender = new Extender();
+  private final Grabber grabber = new Grabber();
   //private final ShooterIntakeControl shooterIntakeControl = new ShooterIntakeControl(intake);
   
   public RobotContainer() {
@@ -63,7 +65,12 @@ public class RobotContainer {
    rejectButton
     .onTrue(new InstantCommand(intake::reverseShooterMotors))
     .onFalse(new InstantCommand(intake::stopReversing));
-   
+   grabButton
+    .onTrue(new InstantCommand(grabber::startGrabber))
+    .toggleOnFalse(new InstantCommand(grabber::stopGrabber));
+    dropButton
+    .onTrue(new InstantCommand(grabber::dropCone))
+    .toggleOnFalse(new InstantCommand(grabber::stopGrabber));
   }
 
   private void configureDefaultCommands() {

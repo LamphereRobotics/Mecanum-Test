@@ -1,22 +1,17 @@
 {
   "HALProvider": {
     "Other Devices": {
-      "Talon FX[1]": {
+      "Victor SPX[10]": {
         "header": {
           "open": true
         }
       },
-      "Talon FX[1]/Fwd Limit": {
+      "Victor SPX[5]": {
         "header": {
           "open": true
         }
       },
-      "Talon FX[1]/Integrated Sensor": {
-        "header": {
-          "open": true
-        }
-      },
-      "Talon FX[2]": {
+      "Victor SPX[7]": {
         "header": {
           "open": true
         }
