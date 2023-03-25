@@ -6,6 +6,8 @@ package frc.robot.Commands;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.Extender;
+import frc.robot.subsystems.Grabber;
 import frc.robot.subsystems.Intake;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 // Command intakeAndShoot = Commands.startEnd(() -> intake.set(1.0), () -> intake.set(0), intake)
@@ -17,13 +19,17 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 public class MidAuton extends SequentialCommandGroup {
   private final DriveSubsystem m_driveSub;
   private final Intake m_int;
+  private final Extender m_extender;
+private final Grabber m_grabber;
   /** Creates a new Auton. */
-  public MidAuton(DriveSubsystem driveSub, Intake intake) {
+  public MidAuton(DriveSubsystem driveSub, Intake intake, Extender extender, Grabber grabber) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     m_int = intake;
     m_driveSub = driveSub;
-    addRequirements(driveSub, intake);
+    m_extender = extender;
+    m_grabber = grabber;
+    addRequirements(driveSub, intake, extender, grabber);
    
     addCommands(
     m_driveSub.driveCommand(0.5, 0.5, 0.5, true).withTimeout(1),

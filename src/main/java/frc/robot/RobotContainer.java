@@ -24,7 +24,7 @@ public class RobotContainer {
   private final Extender extender = new Extender();
   private final Grabber grabber = new Grabber();
 
-  private final Command midAuto = new MidAuton(drive, intake);
+  private final Command midAuto = new MidAuton(drive, intake, extender, grabber);
   private final Command rightAuto = new RightAuton(drive, intake);
   private final Command coneAuto = new ConeAuton(extender, grabber);
 
