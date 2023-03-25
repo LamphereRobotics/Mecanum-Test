@@ -81,7 +81,7 @@ public class DriveSubsystem extends SubsystemBase {
   private final MecanumDriveOdometry odometry = new MecanumDriveOdometry(kinematics, gyro.getRotation2d(),
       getCurrentPositions());
 
-  private boolean fieldRelative = true;
+  private boolean fieldRelative = false;
   private double speedLimit = 5.0;
 
   /** Creates a new DriveSubsystem. */
