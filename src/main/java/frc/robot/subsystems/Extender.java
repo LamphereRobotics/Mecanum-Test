@@ -15,7 +15,9 @@ import frc.robot.Constants.Motors;
 import static frc.robot.Constants.Joysticks.Axes.*;
 
 public class Extender extends SubsystemBase {
-  WPI_TalonFX extender = new WPI_TalonFX(Motors.k_extenderMotor);
+  private WPI_TalonFX extender = new WPI_TalonFX(Motors.k_extenderMotor);
+  
+  public double position = extender.getSelectedSensorPosition();
 
   /** Creates a new Extender. */
 
@@ -24,10 +26,18 @@ public class Extender extends SubsystemBase {
   }
 
   public void Extend() {
+    // Stop the motor when fully extended.
+    if (position >= 200000) {
+      extender.stopMotor();
+    }
     extender.set(ControlMode.PercentOutput, 0.5);
   }
 
   public void UnExtend() {
+    // Stop the motor when fully retracted.
+    if (position <= 0) {
+      extender.stopMotor();
+    }
     extender.set(ControlMode.PercentOutput, -0.5);
   }
 
@@ -50,6 +60,7 @@ public class Extender extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    // Update the arm position on every loop.
+    position = extender.getSelectedSensorPosition();
   }
 }
