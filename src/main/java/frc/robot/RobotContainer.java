@@ -6,10 +6,8 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import frc.robot.Commands.MidAuton;
 import frc.robot.Commands.RightAuton;
-//import frc.robot.Commands.ShooterIntakeControl;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Extender;
 import frc.robot.subsystems.Grabber;
@@ -41,17 +39,11 @@ public class RobotContainer {
     m_chooser.setDefaultOption("M", kDefaultAuto);
     m_chooser.addOption("R", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
-    SmartDashboard.putNumber("TopValue", 0.8);
-    SmartDashboard.putNumber("BottomValue", 0.7);
-
-    intake.setValCommand(SmartDashboard.getNumber("TopValue", 0.8), SmartDashboard.getNumber("BottomValue", 0.7));
-    // shooterIntakeControl.repeatedly();
   }
 
   private void configureBindings() {
     toggleFieldRelativeButton
         .onTrue(drive.toggleFieldRelativeCommand());
-
     minSpeedButton
         .onTrue(drive.setSpeedLimitCommand(0.5))
         .onFalse(drive.setSpeedLimitCommand(5));
@@ -63,13 +55,6 @@ public class RobotContainer {
         .onFalse(drive.setSpeedLimitCommand(5));
     gyroResetButton
         .onTrue(new InstantCommand(drive::resetGyro));
-
-    // extendButton
-    // .onTrue(new InstantCommand(extender::Extend))
-    // .onFalse(new InstantCommand(extender::Stop));
-    // retractButton
-    // .onTrue(new InstantCommand(extender::UnExtend))
-    // .onFalse(new InstantCommand(extender::Stop));
     rejectButton
         .onTrue(new InstantCommand(intake::reverseShooterMotors))
         .onFalse(new InstantCommand(intake::stopReversing));
@@ -78,22 +63,13 @@ public class RobotContainer {
         .onFalse(new InstantCommand(grabber::stopGrabber));
     dropButton
         .onTrue(grabber.dropCone())
-        .onTrue(intake.setValCommand(SmartDashboard.getNumber("TopValue", 0.8),
-            SmartDashboard.getNumber("BottomValue", 0.7)))
         .onFalse(new InstantCommand(grabber::stopGrabber));
-    // highShootButton
-    // .onTrue(intake.startShooterHigh())
-    // .onFalse( new InstantCommand(intake::stopShooterMotors));
-    // lowShootButton
-    // .onTrue(intake.startShooterLow())
-    // .onFalse( new InstantCommand(intake::stopShooterMotors));
   }
 
   private void configureDefaultCommands() {
     drive.setDefaultCommand(drive.driveCommand(driveForwardAxis, driveLeftAxis, rotateAxis));
     extender.setDefaultCommand(extender.exCommand());
     intake.setDefaultCommand(intake.shootTeleOp());
-
   }
 
   public Command getAutonomousCommand() {

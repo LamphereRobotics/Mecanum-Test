@@ -9,37 +9,33 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Commands.ShooterIntakeControl;
 import frc.robot.subsystems.Intake;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 public class Robot extends TimedRobot {
-  //private ShooterIntakeControl SIC = new ShooterIntakeControl(RobotContainer.intake);
   private Command m_autonomousCommand;
   private RobotContainer m_robotContainer;
   private Intake intake = new Intake();
- 
+
   @Override
   public void robotInit() {
-    // SmartDashboard.putNumber("TopValue", 0.8);
-    // SmartDashboard.putNumber("BottomValue", 0.7);
-    
     m_robotContainer = new RobotContainer();
   }
 
   @Override
   public void robotPeriodic() {
-    
-    //intake.setValCommand(SmartDashboard.getNumber("TopValue", 0), SmartDashboard.getNumber("BottomValue", 0));
     CommandScheduler.getInstance().run();
-    
   }
 
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+  }
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+  }
 
   @Override
-  public void disabledExit() {}
+  public void disabledExit() {
+  }
 
   @Override
   public void autonomousInit() {
@@ -56,7 +52,8 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void autonomousExit() {}
+  public void autonomousExit() {
+  }
 
   @Override
   public void teleopInit() {
@@ -71,7 +68,8 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void teleopExit() {}
+  public void teleopExit() {
+  }
 
   @Override
   public void testInit() {
@@ -79,8 +77,10 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void testPeriodic() {}
+  public void testPeriodic() {
+  }
 
   @Override
-  public void testExit() {}
+  public void testExit() {
+  }
 }

@@ -5,10 +5,8 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import static frc.robot.Constants.Joysticks.Axes.*;
@@ -19,26 +17,13 @@ public class Intake extends SubsystemBase {
   WPI_VictorSPX topIntake = new WPI_VictorSPX(7);
   WPI_VictorSPX middleIntake = new WPI_VictorSPX(6);
   WPI_VictorSPX bottomIntake = new WPI_VictorSPX(5);
-  private double topShooterValue = 0.8;
-  private double bottomShooterValue = 0.7;
 
   /** Creates a new Intake. */
   public Intake() {
   }
 
-  private void setValues(double topVal, double bottomVal) {
-    topShooterValue = topVal;
-    bottomShooterValue = bottomVal;
-  }
-
-  public Command setValCommand(double topVal, double bottomVal) {
-    return new InstantCommand(() -> setValues(topVal, bottomVal), this);
-  }
-
   public void startIntakeMotors() {
-
     bottomIntake.set(ControlMode.PercentOutput, 0.75);
-
   }
 
   public void startShooterMotors(double top, double bottom) {
@@ -101,7 +86,6 @@ public class Intake extends SubsystemBase {
 
   @Override
   public void periodic() {
-
     // This method will be called once per scheduler run
   }
 }
