@@ -24,11 +24,12 @@ public class Grabber extends SubsystemBase {
     grabber.set(ControlMode.PercentOutput, 0.75);
   }
 
-  public Command dropCone() {
-    return new InstantCommand( () ->grabber.set(ControlMode.PercentOutput, -0.5));
+  public void dropCone() {
+    grabber.set(ControlMode.PercentOutput, -0.5);
   }
-  public void dropConeCommand(){
-    
+
+  public void dropConeCommand() {
+
   }
 
   public void stopGrabber() {

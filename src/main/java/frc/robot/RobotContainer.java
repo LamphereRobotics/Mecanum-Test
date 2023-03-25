@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.robot.Commands.ConeAuton;
 import frc.robot.Commands.MidAuton;
 import frc.robot.Commands.RightAuton;
 import frc.robot.subsystems.DriveSubsystem;
@@ -18,26 +19,23 @@ import static frc.robot.Constants.Joysticks.Axes.*;
 import static frc.robot.Constants.Joysticks.Buttons.*;
 
 public class RobotContainer {
-
   private final DriveSubsystem drive = new DriveSubsystem();
-  public static final Intake intake = new Intake();
-  private final MidAuton auton = new MidAuton(drive, intake);
-
-  private final RightAuton rAuton = new RightAuton(drive, intake);
-  private final Command kDefaultAuto = auton;
-  private final Command kCustomAuto = rAuton;
-  public static SendableChooser<Command> m_chooser = new SendableChooser<>();
+  private final Intake intake = new Intake();
   private final Extender extender = new Extender();
   private final Grabber grabber = new Grabber();
-  // private final ShooterIntakeControl shooterIntakeControl = new
-  // ShooterIntakeControl(intake);
+
+  private final Command midAuto = new MidAuton(drive, intake);
+  private final Command rightAuto = new RightAuton(drive, intake);
+  private final Command coneAuto = new ConeAuton(extender, grabber);
+
+  public static SendableChooser<Command> m_chooser = new SendableChooser<>();
 
   public RobotContainer() {
-
     configureBindings();
     configureDefaultCommands();
-    m_chooser.setDefaultOption("M", kDefaultAuto);
-    m_chooser.addOption("R", kCustomAuto);
+    m_chooser.setDefaultOption("C", coneAuto);
+    m_chooser.addOption("M", midAuto);
+    m_chooser.addOption("R", rightAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
   }
 
@@ -62,7 +60,7 @@ public class RobotContainer {
         .onTrue(new InstantCommand(grabber::startGrabber))
         .onFalse(new InstantCommand(grabber::stopGrabber));
     dropButton
-        .onTrue(grabber.dropCone())
+        .onTrue(new InstantCommand(grabber::dropCone))
         .onFalse(new InstantCommand(grabber::stopGrabber));
   }
 
