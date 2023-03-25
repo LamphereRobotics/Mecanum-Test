@@ -28,7 +28,7 @@ public class MidAuton extends SequentialCommandGroup {
     addCommands(
     m_driveSub.driveCommand(0.5, 0.5, 0.5, true).withTimeout(1),
     m_driveSub.driveCommand(0, 0, 0, true).withTimeout(0.1),
-    m_int.startShooterMotorsCommand()
+    m_int.startShooterHigh()
     
     );
     

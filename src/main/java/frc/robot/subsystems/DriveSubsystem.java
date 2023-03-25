@@ -29,7 +29,7 @@ import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 import com.ctre.phoenix.sensors.WPI_Pigeon2;
 
 public class DriveSubsystem extends SubsystemBase {
-  private static final double kMinSpeed = 0.095; // 0.095 meters per second
+  private static final double kMinSpeed = 0.15; // 0.095 meters per second
   private static final double kMaxSpeed = 10; // 10 meters per second
   private static final double kMaxRotationSpeed = Math.PI; // 1/2 rotation per second
 

@@ -32,7 +32,7 @@ public class ShooterIntakeControl extends CommandBase {
     }
   
     if(rightTriggerAxis.get() > 0.2){
-      m_Intake.startShooterMotors();
+      m_Intake.startShooterMotors(0.45, 0.45);
       m_Intake.startIntakeMotors();
   } else{
       m_Intake.stopShooterMotors();

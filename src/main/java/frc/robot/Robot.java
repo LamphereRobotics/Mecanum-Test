@@ -9,21 +9,25 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Commands.ShooterIntakeControl;
 import frc.robot.subsystems.Intake;
-
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Robot extends TimedRobot {
   //private ShooterIntakeControl SIC = new ShooterIntakeControl(RobotContainer.intake);
   private Command m_autonomousCommand;
   private RobotContainer m_robotContainer;
   private Intake intake = new Intake();
+ 
   @Override
   public void robotInit() {
+    // SmartDashboard.putNumber("TopValue", 0.8);
+    // SmartDashboard.putNumber("BottomValue", 0.7);
+    
     m_robotContainer = new RobotContainer();
   }
 
   @Override
   public void robotPeriodic() {
     
-    
+    //intake.setValCommand(SmartDashboard.getNumber("TopValue", 0), SmartDashboard.getNumber("BottomValue", 0));
     CommandScheduler.getInstance().run();
     
   }
