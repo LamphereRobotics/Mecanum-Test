@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import frc.robot.Constants.Motors;
@@ -16,29 +17,33 @@ import static frc.robot.Constants.Joysticks.Axes.*;
 
 public class Extender extends SubsystemBase {
   private WPI_TalonFX extender = new WPI_TalonFX(Motors.k_extenderMotor);
-  
+
   public double position = extender.getSelectedSensorPosition();
 
   /** Creates a new Extender. */
 
   public Extender() {
     extender.setNeutralMode(NeutralMode.Brake);
+    extender.setInverted(InvertType.InvertMotorOutput);
+    // extender.setSensorPhase(true);
   }
 
   public void Extend() {
     // Stop the motor when fully extended.
-    if (position >= 200000) {
+    if (position >= 150000) {
       extender.stopMotor();
+    } else {
+      extender.set(ControlMode.PercentOutput, 1);
     }
-    extender.set(ControlMode.PercentOutput, 0.5);
   }
 
   public void UnExtend() {
     // Stop the motor when fully retracted.
     if (position <= 0) {
       extender.stopMotor();
+    } else {
+      extender.set(ControlMode.PercentOutput, -1);
     }
-    extender.set(ControlMode.PercentOutput, -0.5);
   }
 
   public void Stop() {
@@ -46,11 +51,15 @@ public class Extender extends SubsystemBase {
   }
 
   public void exAxis() {
-    if (Math.abs(extendAxis.get()) > 0.1) {
-      extender.set(ControlMode.PercentOutput, extendAxis.get());
-    } else {
-      extender.set(ControlMode.PercentOutput, 0);
+    double out = -extendAxis.get();
+
+    if (Math.abs(out) < 0.1
+        || (out > 0 && position >= 150000)
+        || (out < 0 && position <= 0)) {
+      out = 0;
     }
+
+    extender.set(ControlMode.PercentOutput, out);
   }
 
   public Command exCommand() {
