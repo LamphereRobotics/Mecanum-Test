@@ -30,7 +30,7 @@ public class Extender extends SubsystemBase {
 
   public void Extend() {
     // Stop the motor when fully extended.
-    if (position >= 150000) {
+    if (position >= 160000) {
       extender.stopMotor();
     } else {
       extender.set(ControlMode.PercentOutput, 1);

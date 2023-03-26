@@ -18,23 +18,20 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class MidAuton extends SequentialCommandGroup {
   private final DriveSubsystem m_driveSub;
-  private final Intake m_int;
-  private final Extender m_extender;
-private final Grabber m_grabber;
+
   /** Creates a new Auton. */
-  public MidAuton(DriveSubsystem driveSub, Intake intake, Extender extender, Grabber grabber) {
+  public MidAuton(DriveSubsystem driveSub) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
-    m_int = intake;
+   
     m_driveSub = driveSub;
-    m_extender = extender;
-    m_grabber = grabber;
-    addRequirements(driveSub, intake, extender, grabber);
+ 
    
     addCommands(
-    m_driveSub.driveCommand(0.5, 0.5, 0.5, true).withTimeout(1),
-    m_driveSub.driveCommand(0, 0, 0, true).withTimeout(0.1),
-    m_int.startShooterHigh()
+    
+    m_driveSub.driveCommand(-0.5, 0, 0, false).withTimeout(8),
+    m_driveSub.driveCommand(0, 0, 0, false).withTimeout(0.1)
+    
     
     );
     

@@ -27,7 +27,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 import com.ctre.phoenix.sensors.WPI_Pigeon2;
-
+import edu.wpi.first.math.controller.PIDController;
 public class DriveSubsystem extends SubsystemBase {
   private static final double kMinSpeed = 0.15; // 0.095 meters per second
   private static final double kMaxSpeed = 10; // 10 meters per second
@@ -68,6 +68,7 @@ public class DriveSubsystem extends SubsystemBase {
   private final Translation2d rearRightLocation = new Translation2d(-0.231775, -0.310134);
   private final MecanumDriveKinematics kinematics = new MecanumDriveKinematics(
       frontLeftLocation, frontRightLocation, rearLeftLocation, rearRightLocation);
+  
 
   private final static WPI_Pigeon2 gyro = new WPI_Pigeon2(0);
 
@@ -83,8 +84,24 @@ public class DriveSubsystem extends SubsystemBase {
 
   private boolean fieldRelative = false;
   private double speedLimit = 5.0;
-
+  
+  private void Balance(){
+    double xVal = 0;
+    double yVal = 0;
+    double zVal = 0;
+    if(gyro.getYaw()>10){
+      
+    }
+    if(gyro.getPitch()>10){
+      xVal = pitchControl.calculate(gyro.getPitch());
+    }
+    
+  }
+  PIDController pitchControl = new PIDController(10, 2, kD);
   /** Creates a new DriveSubsystem. */
+  public Command BalanceCommand(){
+    return new RunCommand(() -> Balance(), this);
+  }
   public DriveSubsystem() {
     gyro.reset();
 

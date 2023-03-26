@@ -70,7 +70,7 @@ public class Intake extends SubsystemBase {
         startShooterMotors(0.3, 0.4);
         startIntakeMotors();
       } else if (highShootButton.getAsBoolean()) {
-        startShooterMotors(0.55, 0.55);
+        startShooterMotors(0.45, 0.45);
         startIntakeMotors();
       } else {
         stopShooterMotors();
