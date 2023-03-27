@@ -11,6 +11,7 @@ import edu.wpi.first.math.kinematics.MecanumDriveKinematics;
 import edu.wpi.first.math.kinematics.MecanumDriveOdometry;
 import edu.wpi.first.math.kinematics.MecanumDriveWheelPositions;
 import edu.wpi.first.math.kinematics.MecanumDriveWheelSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -28,6 +29,7 @@ import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 import com.ctre.phoenix.sensors.WPI_Pigeon2;
 import edu.wpi.first.math.controller.PIDController;
+
 public class DriveSubsystem extends SubsystemBase {
   private static final double kMinSpeed = 0.15; // 0.095 meters per second
   private static final double kMaxSpeed = 10; // 10 meters per second
@@ -49,7 +51,7 @@ public class DriveSubsystem extends SubsystemBase {
   private static final double rearRightkF = 0.04512; // Feed forward for velocity
   private static final double kS = 0.02; // Arbitrary feed forward to overcome static friction
 
-  // Peak output of 40 amps 
+  // Peak output of 40 amps
   private static final double kPeakCurrent = 20.0;
 
   private final WPI_TalonFX frontLeftMotor = new WPI_TalonFX(1);
@@ -57,30 +59,24 @@ public class DriveSubsystem extends SubsystemBase {
   private final WPI_TalonFX rearLeftMotor = new WPI_TalonFX(3);
   private final WPI_TalonFX rearRightMotor = new WPI_TalonFX(4);
 
-  // private final Translation2d frontLeftLocation = new Translation2d(0.381, 0.381);
-  // private final Translation2d frontRightLocation = new Translation2d(0.381, -0.381);
-  // private final Translation2d rearLeftLocation = new Translation2d(-0.381, 0.381);
-  // private final Translation2d rearRightLocation = new Translation2d(-0.381, -0.381);
-
   private final Translation2d frontLeftLocation = new Translation2d(0.231775, 0.310134);
   private final Translation2d frontRightLocation = new Translation2d(0.231775, -0.310134);
   private final Translation2d rearLeftLocation = new Translation2d(-0.231775, 0.310134);
   private final Translation2d rearRightLocation = new Translation2d(-0.231775, -0.310134);
   private final MecanumDriveKinematics kinematics = new MecanumDriveKinematics(
       frontLeftLocation, frontRightLocation, rearLeftLocation, rearRightLocation);
-  
+
   private int directionNumber = 1;
   private final static WPI_Pigeon2 gyro = new WPI_Pigeon2(0);
 
   public static Rotation2d rotation() {
     return gyro.getRotation2d();
   }
-  public void resetGyro(){
+
+  public void resetGyro() {
     gyro.reset();
   }
- 
 
-  
   private final MecanumDriveOdometry odometry = new MecanumDriveOdometry(kinematics, gyro.getRotation2d(),
       getCurrentPositions());
 
@@ -88,29 +84,32 @@ public class DriveSubsystem extends SubsystemBase {
   private double speedLimit = 5.0;
   PIDController pitchControl = new PIDController(0.4, 0, kD);
   PIDController yawControl = new PIDController(0.4, 0, kD);
-  private void Balance(){
+  
+  private void Balance() {
     double xVal = 0;
     double yVal = 0;
     double zVal = 0;
-    if(gyro.getYaw()>10){
+    if (gyro.getYaw() > 10) {
       zVal = yawControl.calculate(gyro.getPitch());
     }
-    if(gyro.getPitch()>10){
+    if (gyro.getPitch() > 10) {
       xVal = pitchControl.calculate(gyro.getPitch());
     }
 
     driveRobotRelative(xVal, yVal, zVal);
   }
- 
+
   /** Creates a new DriveSubsystem. */
-  public Command BalanceCommand(){
+  public Command BalanceCommand() {
     return new RunCommand(() -> Balance(), this);
   }
+
   public DriveSubsystem() {
     gyro.reset();
 
     TalonFXConfiguration configs = new TalonFXConfiguration();
 
+    
     /*
      * Torque-based velocity does not require a feed forward, as torque will
      * accelerate the rotor up to the desired velocity by itself
@@ -132,7 +131,7 @@ public class DriveSubsystem extends SubsystemBase {
     configs.slot0.kF = rearRightkF;
     rearRightMotor.configAllSettings(configs);
 
-    //frontLeftMotor.setInverted(true);
+    // frontLeftMotor.setInverted(true);
     rearLeftMotor.setInverted(true);
     frontRightMotor.setInverted(true);
     frontLeftMotor.setNeutralMode(NeutralMode.Brake);
@@ -145,6 +144,8 @@ public class DriveSubsystem extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     updateOdometry();
+    SmartDashboard.putNumber("GyroYaw", gyro.getYaw());
+    SmartDashboard.putNumber("GyroPitch", gyro.getPitch());
   }
 
   public MecanumDriveWheelSpeeds getCurrentSpeeds() {
@@ -230,20 +231,24 @@ public class DriveSubsystem extends SubsystemBase {
 
   public Command driveCommand(double x, double y, double z, boolean fieldRelative) {
     return new RunCommand(
-        fieldRelative ? () -> driveFieldRelative(x*directionNumber, y*directionNumber, z*directionNumber) : () -> driveRobotRelative(x*directionNumber, y*directionNumber, z*directionNumber), this);
+        fieldRelative ? () -> driveFieldRelative(x * directionNumber, y * directionNumber, z * directionNumber)
+            : () -> driveRobotRelative(x * directionNumber, y * directionNumber, z * directionNumber),
+        this);
   }
-  public void swapDirection(){
+
+  public void swapDirection() {
     directionNumber *= -1;
   }
 
   public Command driveCommand(Supplier<Double> x, Supplier<Double> y, Supplier<Double> z) {
-    return new RunCommand(() -> driveTeleop(x.get()*directionNumber, y.get()*directionNumber, z.get()*directionNumber), this);
+    return new RunCommand(
+        () -> driveTeleop(x.get() * directionNumber, y.get() * directionNumber, z.get() * directionNumber), this);
   }
 
   public Command setFieldRelativeCommand(boolean value) {
     return new InstantCommand(() -> setFieldRelative(value), this);
   }
-  
+
   public Command toggleFieldRelativeCommand() {
     return new InstantCommand(() -> setFieldRelative(!fieldRelative), this);
   }
@@ -260,3 +265,14 @@ public class DriveSubsystem extends SubsystemBase {
     return talonUnits * kTalonUnitsToMetersMultiplier;
   }
 }
+
+//test Bot Transforms
+  // private final Translation2d frontLeftLocation = new Translation2d(0.381,
+  // 0.381);
+  // private final Translation2d frontRightLocation = new Translation2d(0.381,
+  // -0.381);
+  // private final Translation2d rearLeftLocation = new Translation2d(-0.381,
+  // 0.381);
+  // private final Translation2d rearRightLocation = new Translation2d(-0.381,
+  // -0.381);
+
