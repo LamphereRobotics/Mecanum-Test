@@ -68,6 +68,7 @@ public class DriveSubsystem extends SubsystemBase {
 
   private int directionNumber = 1;
   private final static WPI_Pigeon2 gyro = new WPI_Pigeon2(0);
+  private double origYaw;
 
   public static Rotation2d rotation() {
     return gyro.getRotation2d();
@@ -89,8 +90,8 @@ public class DriveSubsystem extends SubsystemBase {
     double xVal = 0;
     double yVal = 0;
     double zVal = 0;
-    if (gyro.getYaw() > 10) {
-      zVal = yawControl.calculate(gyro.getPitch());
+    if (gyro.getYaw() - origYaw > 10) {
+      zVal = yawControl.calculate(gyro.getYaw() - origYaw);
     }
     if (gyro.getPitch() > 10) {
       xVal = pitchControl.calculate(gyro.getPitch());
@@ -109,7 +110,7 @@ public class DriveSubsystem extends SubsystemBase {
 
     TalonFXConfiguration configs = new TalonFXConfiguration();
 
-    
+    origYaw = gyro.getYaw();
     /*
      * Torque-based velocity does not require a feed forward, as torque will
      * accelerate the rotor up to the desired velocity by itself
@@ -146,6 +147,7 @@ public class DriveSubsystem extends SubsystemBase {
     updateOdometry();
     SmartDashboard.putNumber("GyroYaw", gyro.getYaw());
     SmartDashboard.putNumber("GyroPitch", gyro.getPitch());
+    
   }
 
   public MecanumDriveWheelSpeeds getCurrentSpeeds() {
