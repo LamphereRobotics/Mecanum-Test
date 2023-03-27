@@ -23,7 +23,8 @@ public class ConeMoveAuton extends SequentialCommandGroup {
         new RunCommand(extender::Extend, extender).withTimeout(2),
         new RunCommand(grabber::dropCone, grabber).withTimeout(1),
         new InstantCommand(grabber::stopGrabber, grabber),
-        new MidAuton(drive));
+        new MidAuton(drive),
+        new RunCommand(extender::UnExtend, extender).withTimeout(4));
 
   }
 }

@@ -68,6 +68,7 @@ public class RobotContainer {
     drive.setDefaultCommand(drive.driveCommand(driveForwardAxis, driveLeftAxis, rotateAxis));
     extender.setDefaultCommand(extender.exCommand());
     intake.setDefaultCommand(intake.shootTeleOp());
+
   }
 
   public Command getAutonomousCommand() {
