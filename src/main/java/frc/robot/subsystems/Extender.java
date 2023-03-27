@@ -55,11 +55,15 @@ public class Extender extends SubsystemBase {
 
     // Reduce speed retracting
     if (out < 0)
-      out *= 0.5;
+      out *= 0.7;
 
-    // Deadband + extension limits
-    if (Math.abs(out) < 0.1
-        || (out > 0 && position >= 150000)
+    // Deadband
+    if (Math.abs(out) < 0.1) {
+      out = -0.7;
+    }
+
+    // extension limits
+    if ((out > 0 && position >= 150000)
         || (out < 0 && position <= 5000)) {
       out = 0;
     }
