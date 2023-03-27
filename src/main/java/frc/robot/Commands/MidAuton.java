@@ -6,13 +6,6 @@ package frc.robot.Commands;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.subsystems.Extender;
-import frc.robot.subsystems.Grabber;
-import frc.robot.subsystems.Intake;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-// Command intakeAndShoot = Commands.startEnd(() -> intake.set(1.0), () -> intake.set(0), intake)
-//     .alongWith(new RunShooter(shooter));
-import edu.wpi.first.wpilibj2.command.RunCommand;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
