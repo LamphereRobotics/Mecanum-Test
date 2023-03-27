@@ -69,35 +69,39 @@ public class DriveSubsystem extends SubsystemBase {
   private final MecanumDriveKinematics kinematics = new MecanumDriveKinematics(
       frontLeftLocation, frontRightLocation, rearLeftLocation, rearRightLocation);
   
-
+  private int directionNumber = 1;
   private final static WPI_Pigeon2 gyro = new WPI_Pigeon2(0);
 
   public static Rotation2d rotation() {
     return gyro.getRotation2d();
-    
   }
   public void resetGyro(){
     gyro.reset();
   }
+ 
+
+  
   private final MecanumDriveOdometry odometry = new MecanumDriveOdometry(kinematics, gyro.getRotation2d(),
       getCurrentPositions());
 
   private boolean fieldRelative = false;
   private double speedLimit = 5.0;
-  
+  PIDController pitchControl = new PIDController(0.4, 0, kD);
+  PIDController yawControl = new PIDController(0.4, 0, kD);
   private void Balance(){
     double xVal = 0;
     double yVal = 0;
     double zVal = 0;
     if(gyro.getYaw()>10){
-      
+      zVal = yawControl.calculate(gyro.getPitch());
     }
     if(gyro.getPitch()>10){
       xVal = pitchControl.calculate(gyro.getPitch());
     }
-    
+
+    driveRobotRelative(xVal, yVal, zVal);
   }
-  PIDController pitchControl = new PIDController(10, 2, kD);
+ 
   /** Creates a new DriveSubsystem. */
   public Command BalanceCommand(){
     return new RunCommand(() -> Balance(), this);
@@ -226,11 +230,14 @@ public class DriveSubsystem extends SubsystemBase {
 
   public Command driveCommand(double x, double y, double z, boolean fieldRelative) {
     return new RunCommand(
-        fieldRelative ? () -> driveFieldRelative(x, y, z) : () -> driveRobotRelative(x, y, z), this);
+        fieldRelative ? () -> driveFieldRelative(x*directionNumber, y*directionNumber, z*directionNumber) : () -> driveRobotRelative(x*directionNumber, y*directionNumber, z*directionNumber), this);
+  }
+  public void swapDirection(){
+    directionNumber *= -1;
   }
 
   public Command driveCommand(Supplier<Double> x, Supplier<Double> y, Supplier<Double> z) {
-    return new RunCommand(() -> driveTeleop(x.get(), y.get(), z.get()), this);
+    return new RunCommand(() -> driveTeleop(x.get()*directionNumber, y.get()*directionNumber, z.get()*directionNumber), this);
   }
 
   public Command setFieldRelativeCommand(boolean value) {
