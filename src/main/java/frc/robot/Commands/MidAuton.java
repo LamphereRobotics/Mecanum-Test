@@ -12,6 +12,7 @@ import frc.robot.subsystems.Intake;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 // Command intakeAndShoot = Commands.startEnd(() -> intake.set(1.0), () -> intake.set(0), intake)
 //     .alongWith(new RunShooter(shooter));
+import edu.wpi.first.wpilibj2.command.RunCommand;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
@@ -23,18 +24,15 @@ public class MidAuton extends SequentialCommandGroup {
   public MidAuton(DriveSubsystem driveSub) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
-   
+
     m_driveSub = driveSub;
- 
-   
     addCommands(
-    
-    m_driveSub.driveCommand(-0.5, 0, 0, false).withTimeout(8),
-    m_driveSub.driveCommand(0, 0, 0, false).withTimeout(0.1)
-    
-    
+
+        m_driveSub.driveCommand(-0.5, 0, 0, false).withTimeout(8),
+        m_driveSub.driveCommand(0, 0, 0, false).withTimeout(0.5)
+
     );
-    
+
   }
-  
+
 }
