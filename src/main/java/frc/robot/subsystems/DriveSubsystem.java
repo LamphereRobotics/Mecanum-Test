@@ -100,7 +100,11 @@ public class DriveSubsystem extends SubsystemBase {
     if (gyro.getPitch() < -2) {
       xVal = pitchControl.calculate(gyro.getPitch());
     }else{
+      if(gyro.getPitch() > 2){
+        xVal = pitchControl.calculate(gyro.getPitch());
+      }else{
       xVal = 0;
+      }
     }
 
     driveRobotRelative(xVal, yVal, zVal);
