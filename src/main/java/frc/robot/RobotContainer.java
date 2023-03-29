@@ -42,6 +42,9 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
+    balanceButton
+      .onTrue(drive.BalanceCommand())
+      .onFalse(new InstantCommand(() -> drive.BalanceCommand().cancel()));
     toggleFieldRelativeButton
         .onTrue(drive.toggleFieldRelativeCommand());
     minSpeedButton
