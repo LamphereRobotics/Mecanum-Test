@@ -81,30 +81,56 @@ public class DriveSubsystem extends SubsystemBase {
   private final MecanumDriveOdometry odometry = new MecanumDriveOdometry(kinematics, gyro.getRotation2d(),
       getCurrentPositions());
 
-  private boolean fieldRelative = false;
+  private boolean fieldRelative = true;
   private double speedLimit = 5.0;
-  PIDController pitchControl = new PIDController(0.4, 0, kD);
-  PIDController yawControl = new PIDController(0.4, 0, kD);
+
+  PIDController pitchControl = new PIDController(0.01, 0, kD);
+  PIDController yawControl = new PIDController(0.01, 0, kD);
   
   private void Balance() {
     double xVal = 0;
     double yVal = 0;
     double zVal = 0;
-    if (gyro.getYaw() - origYaw > 10) {
+    
+    if (Math.abs( gyro.getYaw() - origYaw) > 10) {
       zVal = yawControl.calculate(gyro.getYaw() - origYaw);
+    }else{
+      zVal = 0;
     }
-    if (gyro.getPitch() > 10) {
+    if (gyro.getPitch() < -2) {
       xVal = pitchControl.calculate(gyro.getPitch());
+    }else{
+      xVal = 0;
     }
 
     driveRobotRelative(xVal, yVal, zVal);
+    
+    
   }
-
+  private void rotateBack() {
+    if (180 - Math.abs( gyro.getYaw()) > 5) {
+      driveRobotRelative(0,0,1.3);
+    }else{
+      driveRobotRelative(0,0,0);
+    }
+  }
+  public Command invertCommand(){
+    return new RunCommand(() -> rotateBack(), this);
+  }
   /** Creates a new DriveSubsystem. */
   public Command BalanceCommand() {
     return new RunCommand(() -> Balance(), this);
+    // @Override
+    // public boolean isFinished() {
+    //   return false;
+    // }
   }
-
+  // reference public Command detectIncline(){
+  //   @Override
+  //    public boolean isFinidxshed() {
+   // return done;
+  //}
+  // }
   public DriveSubsystem() {
     gyro.reset();
 
@@ -145,7 +171,10 @@ public class DriveSubsystem extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     updateOdometry();
-    SmartDashboard.putNumber("GyroYaw", gyro.getYaw());
+    if(Math.abs( gyro.getYaw()) >= 360){
+      gyro.setYaw(0);
+    }
+    SmartDashboard.putNumber("GyroYaw", gyro.getAngle());
     SmartDashboard.putNumber("GyroPitch", gyro.getPitch());
     
   }

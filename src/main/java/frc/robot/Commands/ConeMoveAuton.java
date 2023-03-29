@@ -24,7 +24,10 @@ public class ConeMoveAuton extends SequentialCommandGroup {
         new RunCommand(grabber::dropCone, grabber).withTimeout(1),
         new InstantCommand(grabber::stopGrabber, grabber),
         new MidAuton(drive),
-        new RunCommand(extender::UnExtend, extender).withTimeout(4));
+        new RunCommand(extender::UnExtend, extender).withTimeout(3),
+        drive.invertCommand().withTimeout(8),
+        new InstantCommand(drive::resetGyro)
+        );
 
   }
 }

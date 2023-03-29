@@ -5,6 +5,7 @@
 package frc.robot.Commands;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.DriveSubsystem;
 
@@ -17,6 +18,6 @@ public class AutoBalance extends SequentialCommandGroup {
   public AutoBalance(DriveSubsystem drive) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
-    addCommands(new InstantCommand(drive::resetGyro));
+    addCommands(new InstantCommand(drive::resetGyro), new ParallelRaceGroup(null));
   }
 }

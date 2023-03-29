@@ -39,7 +39,7 @@ public class Extender extends SubsystemBase {
 
   public void UnExtend() {
     // Stop the motor when fully retracted.
-    if (position <= 5000) {
+    if (position <= 9000) {
       extender.stopMotor();
     } else {
       extender.set(ControlMode.PercentOutput, -0.5);
@@ -55,16 +55,16 @@ public class Extender extends SubsystemBase {
 
     // Reduce speed retracting
     if (out < 0)
-      out *= 0.7;
+      out *= 0.6;
 
     // Deadband
     if (Math.abs(out) < 0.1) {
-      out = -0.7;
+      out = -0.6;//-0.7
     }
 
     // extension limits
-    if ((out > 0 && position >= 150000)
-        || (out < 0 && position <= 5000)) {
+    if ((out > 0 && position >= 170000)
+        || (out < 0 && position <= 10000)) {
       out = 0;
     }
 

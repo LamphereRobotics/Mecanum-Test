@@ -32,11 +32,18 @@ public class Intake extends SubsystemBase {
   }
 
   public Command startShooterHigh() {
-    return new RunCommand(() -> startShooterMotors(0.45, 0.45), this);
+    return new RunCommand(() -> startShooterMotors(0.55, 0.55), this);
   }
 
   public Command startShooterLow() {
-    return new RunCommand(() -> startShooterMotors(0.3, 0.4), this);
+    return new RunCommand(() -> startShooterMotors(0.45, 0.45), this);//0.3, 0.4
+  }
+  public void shooterHigh() {
+    startShooterMotors(0.55, 0.55);
+  }
+
+  public void shooterLow() {
+    startShooterMotors(0.45, 0.45);//0.3, 0.4
   }
 
   public void reverseShooterMotors() {
@@ -67,10 +74,10 @@ public class Intake extends SubsystemBase {
         stopIntakeMotors();
       }
       if (lowShootButton.getAsBoolean()) {
-        startShooterMotors(0.3, 0.4);
+        shooterLow();
         startIntakeMotors();
       } else if (highShootButton.getAsBoolean()) {
-        startShooterMotors(0.45, 0.45);
+        shooterHigh();
         startIntakeMotors();
       } else {
         stopShooterMotors();
