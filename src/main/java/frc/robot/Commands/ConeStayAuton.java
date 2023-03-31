@@ -7,6 +7,7 @@ package frc.robot.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Extender;
 import frc.robot.subsystems.Grabber;
 
@@ -15,15 +16,15 @@ import frc.robot.subsystems.Grabber;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class ConeStayAuton extends SequentialCommandGroup {
   /** Creates a new Auton. */
-  public ConeStayAuton(Grabber grabber, Extender extender) {
+  public ConeStayAuton(Grabber grabber, Extender extender, DriveSubsystem drive) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
 
     addCommands(
-        new RunCommand(extender::Extend, extender).withTimeout(2),
+        drive.flipYaw(),
+        extender.ExtendCommand(),
         new RunCommand(grabber::dropCone, grabber).withTimeout(1),
-        new InstantCommand(grabber::stopGrabber, grabber));
-
+        new InstantCommand(grabber::stopGrabber, grabber),
+        extender.RetractCommand());
   }
-
 }

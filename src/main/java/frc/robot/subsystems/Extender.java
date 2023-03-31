@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -20,6 +21,9 @@ public class Extender extends SubsystemBase {
 
   public double position = extender.getSelectedSensorPosition();
 
+  private static final double fullExtend = 170000;
+  private static final double fullRetract = 10000;
+
   /** Creates a new Extender. */
 
   public Extender() {
@@ -28,22 +32,34 @@ public class Extender extends SubsystemBase {
     // extender.setSensorPhase(true);
   }
 
-  public void Extend() {
+  private void Extend() {
     // Stop the motor when fully extended.
-    if (position >= 160000) {
+    if (isFullyExtended()) {
       extender.stopMotor();
     } else {
       extender.set(ControlMode.PercentOutput, 1);
     }
   }
 
-  public void UnExtend() {
+  private void UnExtend() {
     // Stop the motor when fully retracted.
-    if (position <= 9000) {
+    if (isFullyRetracted()) {
       extender.stopMotor();
     } else {
       extender.set(ControlMode.PercentOutput, -0.5);
     }
+  }
+
+  public Command ExtendCommand() {
+    return new RunCommand(this::Extend, this)
+        .until(this::isFullyExtended)
+        .andThen(new InstantCommand(this::Stop, this));
+  }
+
+  public Command RetractCommand() {
+    return new RunCommand(this::UnExtend, this)
+        .until(this::isFullyRetracted)
+        .andThen(new InstantCommand(this::Stop, this));
   }
 
   public void Stop() {
@@ -59,12 +75,12 @@ public class Extender extends SubsystemBase {
 
     // Deadband
     if (Math.abs(out) < 0.1) {
-      out = -0.6;//-0.7
+      out = -0.6;// -0.7
     }
 
     // extension limits
-    if ((out > 0 && position >= 170000)
-        || (out < 0 && position <= 10000)) {
+    if ((out > 0 && isFullyExtended())
+        || (out < 0 && isFullyRetracted())) {
       out = 0;
     }
 
@@ -80,5 +96,13 @@ public class Extender extends SubsystemBase {
   public void periodic() {
     // Update the arm position on every loop.
     position = extender.getSelectedSensorPosition();
+  }
+
+  public boolean isFullyExtended() {
+    return position >= fullExtend;
+  }
+
+  public boolean isFullyRetracted() {
+    return position <= fullRetract;
   }
 }

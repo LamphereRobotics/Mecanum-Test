@@ -4,8 +4,6 @@
 
 package frc.robot.Commands;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Extender;
@@ -20,14 +18,9 @@ public class ConeMoveAuton extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-        new RunCommand(extender::Extend, extender).withTimeout(2),
-        new RunCommand(grabber::dropCone, grabber).withTimeout(1),
-        new InstantCommand(grabber::stopGrabber, grabber),
-        new MidAuton(drive),
-        new RunCommand(extender::UnExtend, extender).withTimeout(3),
-        drive.invertCommand().withTimeout(8),
-        new InstantCommand(drive::resetGyro)
-        );
-
+        new ConeStayAuton(grabber, extender, drive),
+        drive.driveCommand(-0.5, 0, 0, false).withTimeout(8),
+        drive.driveCommand(0, 0, 0, false).withTimeout(0.5),
+        drive.invertCommand());
   }
 }

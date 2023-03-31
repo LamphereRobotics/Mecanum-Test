@@ -6,8 +6,8 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.robot.Commands.BalanceAuton;
 import frc.robot.Commands.ConeMoveAuton;
-import frc.robot.Commands.MidAuton;
 import frc.robot.Commands.ConeStayAuton;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Extender;
@@ -24,27 +24,27 @@ public class RobotContainer {
   private final Extender extender = new Extender();
   private final Grabber grabber = new Grabber();
 
-  private final Command midAuto = new MidAuton(drive);
-  private final Command coneStayAuto = new ConeStayAuton(grabber, extender);
+  private final Command coneStayAuto = new ConeStayAuton(grabber, extender, drive);
   private final Command coneMoveAuto = new ConeMoveAuton(extender, grabber, drive);
+  private final Command balanceAuto = new BalanceAuton(extender, grabber, drive);
+
+  private final Command balanceCommand = drive.BalanceCommand();
 
   public static SendableChooser<Command> m_chooser = new SendableChooser<>();
-
-  
 
   public RobotContainer() {
     configureBindings();
     configureDefaultCommands();
     m_chooser.setDefaultOption("ConeStay", coneStayAuto);
-    m_chooser.addOption("Mid", midAuto);
     m_chooser.addOption("ConeMove", coneMoveAuto);
+    m_chooser.addOption("Auto Balance", balanceAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
   }
 
   private void configureBindings() {
     balanceButton
-      .onTrue(drive.BalanceCommand())
-      .onFalse(new InstantCommand(() -> drive.BalanceCommand().cancel()));
+        .onTrue(balanceCommand)
+        .onFalse(new InstantCommand(() -> balanceCommand.cancel()));
     toggleFieldRelativeButton
         .onTrue(drive.toggleFieldRelativeCommand());
     minSpeedButton

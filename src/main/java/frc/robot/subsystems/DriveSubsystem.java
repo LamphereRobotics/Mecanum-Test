@@ -68,7 +68,6 @@ public class DriveSubsystem extends SubsystemBase {
 
   private int directionNumber = 1;
   private final static WPI_Pigeon2 gyro = new WPI_Pigeon2(0);
-  private double origYaw;
 
   public static Rotation2d rotation() {
     return gyro.getRotation2d();
@@ -84,63 +83,64 @@ public class DriveSubsystem extends SubsystemBase {
   private boolean fieldRelative = true;
   private double speedLimit = 5.0;
 
-  PIDController pitchControl = new PIDController(0.01, 0, kD);
-  PIDController yawControl = new PIDController(0.01, 0, kD);
-  
+  PIDController pitchControl = new PIDController(0.04, 0, 0);
+  PIDController yawControl = new PIDController(0.1, 0, 0);
+
+  public Command flipYaw() {
+    return new InstantCommand(() -> gyro.setYaw(180), this);
+  }
+
   private void Balance() {
     double xVal = 0;
     double yVal = 0;
     double zVal = 0;
-    
-    if (Math.abs( gyro.getYaw() - origYaw) > 10) {
-      zVal = yawControl.calculate(gyro.getYaw() - origYaw);
-    }else{
-      zVal = 0;
-    }
-    if (gyro.getPitch() < -2) {
-      xVal = pitchControl.calculate(gyro.getPitch());
-    }else{
-      if(gyro.getPitch() > 2){
-        xVal = pitchControl.calculate(gyro.getPitch());
-      }else{
-      xVal = 0;
-      }
-    }
+
+    zVal = yawControl.calculate(gyro.getYaw());
+
+    xVal = pitchControl.calculate(gyro.getPitch());
 
     driveRobotRelative(xVal, yVal, zVal);
-    
-    
+
   }
+
   private void rotateBack() {
-    if (180 - Math.abs( gyro.getYaw()) > 5) {
-      driveRobotRelative(0,0,1.3);
-    }else{
-      driveRobotRelative(0,0,0);
+    if (!isForward()) {
+      driveRobotRelative(0, 0, 1.3);
+    } else {
+      stopDrive();
     }
   }
-  public Command invertCommand(){
-    return new RunCommand(() -> rotateBack(), this);
+
+  public Command invertCommand() {
+    return new RunCommand(this::rotateBack, this)
+        .until(this::isForward)
+        .andThen(new InstantCommand(this::stopDrive, this));
   }
+
+  public boolean isForward() {
+    return Math.abs(gyro.getYaw()) < 5;
+  }
+
   /** Creates a new DriveSubsystem. */
   public Command BalanceCommand() {
     return new RunCommand(() -> Balance(), this);
     // @Override
     // public boolean isFinished() {
-    //   return false;
+    // return false;
     // }
   }
+
   // reference public Command detectIncline(){
-  //   @Override
-  //    public boolean isFinidxshed() {
-   // return done;
-  //}
+  // @Override
+  // public boolean isFinidxshed() {
+  // return done;
+  // }
   // }
   public DriveSubsystem() {
     gyro.reset();
 
     TalonFXConfiguration configs = new TalonFXConfiguration();
 
-    origYaw = gyro.getYaw();
     /*
      * Torque-based velocity does not require a feed forward, as torque will
      * accelerate the rotor up to the desired velocity by itself
@@ -175,12 +175,12 @@ public class DriveSubsystem extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     updateOdometry();
-    if(Math.abs( gyro.getYaw()) >= 360){
+    if (Math.abs(gyro.getYaw()) >= 360) {
       gyro.setYaw(0);
     }
     SmartDashboard.putNumber("GyroYaw", gyro.getAngle());
     SmartDashboard.putNumber("GyroPitch", gyro.getPitch());
-    
+
   }
 
   public MecanumDriveWheelSpeeds getCurrentSpeeds() {
@@ -264,6 +264,10 @@ public class DriveSubsystem extends SubsystemBase {
     odometry.update(gyro.getRotation2d(), getCurrentPositions());
   }
 
+  private void stopDrive() {
+    driveRobotRelative(0, 0, 0);
+  }
+
   public Command driveCommand(double x, double y, double z, boolean fieldRelative) {
     return new RunCommand(
         fieldRelative ? () -> driveFieldRelative(x * directionNumber, y * directionNumber, z * directionNumber)
@@ -301,13 +305,12 @@ public class DriveSubsystem extends SubsystemBase {
   }
 }
 
-//test Bot Transforms
-  // private final Translation2d frontLeftLocation = new Translation2d(0.381,
-  // 0.381);
-  // private final Translation2d frontRightLocation = new Translation2d(0.381,
-  // -0.381);
-  // private final Translation2d rearLeftLocation = new Translation2d(-0.381,
-  // 0.381);
-  // private final Translation2d rearRightLocation = new Translation2d(-0.381,
-  // -0.381);
-
+// test Bot Transforms
+// private final Translation2d frontLeftLocation = new Translation2d(0.381,
+// 0.381);
+// private final Translation2d frontRightLocation = new Translation2d(0.381,
+// -0.381);
+// private final Translation2d rearLeftLocation = new Translation2d(-0.381,
+// 0.381);
+// private final Translation2d rearRightLocation = new Translation2d(-0.381,
+// -0.381);

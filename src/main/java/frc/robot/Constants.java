@@ -42,8 +42,8 @@ public class Constants {
       // A Button to shoot Low
       public static final JoystickButton lowShootButton = new JoystickButton(operatorJoystick, 2);
 
-      public static final JoystickButton balanceButton = new JoystickButton(operatorJoystick, 7);
-      
+      public static final JoystickButton balanceButton = new JoystickButton(singleDriveJoystick, 7);
+
     }
   }
 
