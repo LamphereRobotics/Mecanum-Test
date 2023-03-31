@@ -67,9 +67,9 @@ public class DriveSubsystem extends SubsystemBase {
       frontLeftLocation, frontRightLocation, rearLeftLocation, rearRightLocation);
 
   private int directionNumber = 1;
-  private final static WPI_Pigeon2 gyro = new WPI_Pigeon2(0);
+  public final WPI_Pigeon2 gyro = new WPI_Pigeon2(0);
 
-  public static Rotation2d rotation() {
+  public Rotation2d rotation() {
     return gyro.getRotation2d();
   }
 
@@ -83,7 +83,7 @@ public class DriveSubsystem extends SubsystemBase {
   private boolean fieldRelative = true;
   private double speedLimit = 5.0;
 
-  PIDController pitchControl = new PIDController(0.04, 0, 0);
+  PIDController pitchControl = new PIDController(0.05, 0, 0.01);
   PIDController yawControl = new PIDController(0.1, 0, 0);
 
   public Command flipYaw() {
@@ -97,7 +97,11 @@ public class DriveSubsystem extends SubsystemBase {
 
     zVal = yawControl.calculate(gyro.getYaw());
 
-    xVal = pitchControl.calculate(gyro.getPitch());
+    if (Math.abs(gyro.getPitch()) > 2) {
+      xVal = pitchControl.calculate(gyro.getPitch());
+    } else {
+      xVal = 0;
+    }
 
     driveRobotRelative(xVal, yVal, zVal);
 
@@ -105,7 +109,7 @@ public class DriveSubsystem extends SubsystemBase {
 
   private void rotateBack() {
     if (!isForward()) {
-      driveRobotRelative(0, 0, 1.3);
+      driveRobotRelative(0, 0, yawControl.calculate(gyro.getYaw()));
     } else {
       stopDrive();
     }
