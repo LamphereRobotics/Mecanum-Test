@@ -32,11 +32,11 @@ public class Intake extends SubsystemBase {
   }
 
   public Command startShooterHigh() {
-    return new RunCommand(() -> startShooterMotors(0.55, 0.55), this);
+    return new RunCommand(() -> shooterHigh(), this);
   }
 
   public Command startShooterLow() {
-    return new RunCommand(() -> startShooterMotors(0.45, 0.45), this);//0.3, 0.4
+    return new RunCommand(() -> shooterLow(), this);//0.3, 0.4
   }
   public void shooterHigh() {
     startShooterMotors(0.55, 0.55);
