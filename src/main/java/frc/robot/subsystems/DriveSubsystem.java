@@ -97,11 +97,11 @@ public class DriveSubsystem extends SubsystemBase {
 
     zVal = yawControl.calculate(gyro.getYaw());
 
-    if (Math.abs(gyro.getPitch()) > 2) {
+   // if (Math.abs(gyro.getPitch()) > 2) {
       xVal = pitchControl.calculate(gyro.getPitch());
-    } else {
-      xVal = 0;
-    }
+    // } else {
+    //   xVal = 0;
+    // }
 
     driveRobotRelative(xVal, yVal, zVal);
 
